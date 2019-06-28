@@ -1,0 +1,3 @@
+#!/bin/bash
+
+docker push hellobloom/bloomiq_aggregator:$(git rev-parse HEAD)

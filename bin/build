@@ -1,0 +1,8 @@
+#!/bin/bash
+
+source './bin/shared/strict-mode.sh'
+bin/build-pre-process
+
+bin/build-server
+
+bin/build-post-process

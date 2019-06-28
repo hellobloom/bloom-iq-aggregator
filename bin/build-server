@@ -1,0 +1,7 @@
+#!/bin/bash
+
+source './bin/shared/strict-mode.sh'
+
+echo "Building server"
+node_modules/.bin/tsc -p tsconfig.server.json
+echo "Done building server"

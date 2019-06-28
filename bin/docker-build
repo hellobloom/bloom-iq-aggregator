@@ -1,0 +1,5 @@
+#!/bin/bash
+
+source .env.docker
+
+docker build . -t hellobloom/bloomiq_aggregator:$(git rev-parse HEAD) --build-arg SSH_KEY=$SSH_KEY --build-arg NPMRC=$NPMRC

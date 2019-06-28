@@ -1,0 +1,14 @@
+#!/bin/bash
+
+source './bin/shared/strict-mode.sh'
+
+list_prettier_supported_files() {
+  find . -regextype posix-extended -regex '.*(.babelrc|.prettierrc|.css|.json|.md|.ts|.tsx)' -printf '%P\n'
+}
+
+rewrite_with_prettier() {
+  xargs node_modules/.bin/prettier --check --config .prettierrc
+}
+
+list_prettier_supported_files | rewrite_with_prettier
+
