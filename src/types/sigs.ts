@@ -1,4 +1,7 @@
-import { AttestationData as AD } from "@bloomprotocol/attestations-lib"
+import {
+  AttestationData as AD,
+  HashingLogic as HL
+} from "@bloomprotocol/attestations-lib"
 export type TDate = string
 export type TUuid = string
 export type TAddr = string
@@ -56,5 +59,5 @@ export interface performAttestationStr {
 
 export interface reportStr<AttestationType> {
   nonce: "fbfa9ebca9b0993298fab098ca..."
-  attestationData: AD.IClaimNode<AttestationType>
+  attestationData: HL.IClaimNode // of AttestationType
 }
