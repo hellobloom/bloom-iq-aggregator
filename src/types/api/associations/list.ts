@@ -1,7 +1,8 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
+import * as Association from "@src/types/models/association"
 
 export type reqBody = {
-  revokeAssociation: {
+  listAssociation: {
     plaintext: string
     subjectSig: string
   }
@@ -11,6 +12,7 @@ export type reqQuery = {}
 
 export type respBody = {
   success: true
+  associations: Array<Association.TS>
 }
 
 export type req = TReq<reqBody, reqParams>

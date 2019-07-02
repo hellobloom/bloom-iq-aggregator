@@ -4,7 +4,6 @@ export type TS = B.Serialize<T>
 
 export type T = {
   id?: string // uuid
-  created: string
-  updated: string
-  pubkey: Buffer
+  created?: string
+  updated?: string
 }

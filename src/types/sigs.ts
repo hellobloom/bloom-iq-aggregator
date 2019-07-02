@@ -6,58 +6,71 @@ export type TDate = string
 export type TUuid = string
 export type TAddr = string
 export type TSha256 = string
+export type TNonce = string
 
+// Associations
 export interface allowAssociationStr {
-  type: "bloom-iq-allow-association"
+  type: "bloomiq-allow_association"
   timestamp: TDate
-  aggregator: TAddr
+  aggregator_addr: TAddr
+}
+
+export interface listAssociationStr {
+  type: "bloomiq-list_association"
+  timestamp: TDate
+}
+
+export interface showAssociationStr {
+  type: "bloomiq-show_association"
+  timestamp: TDate
 }
 
 export interface revokeAssociationStr {
-  type: "bloom-iq-revoke-association"
+  type: "bloomiq-revoke_association"
   timestamp: TDate
   aggregator: TAddr
 }
 
-export interface listReporterStr {
-  type: "bloom-iq-list-reporter"
+// Reporters
+export interface allowReporterStr {
+  type: "bloomiq-allow_reporter"
   timestamp: TDate
+  reporter_addr: TAddr
 }
 
-export interface allowReporterStr {
-  type: "bloom-iq-allow-reporter"
+export interface listReporterStr {
+  type: "bloomiq-list_reporter"
   timestamp: TDate
-  reporterAddr: TAddr
 }
 
 export interface revokeReporterStr {
-  type: "bloom-iq-revoke-reporter"
+  type: "bloomiq-revoke_reporter"
   timestamp: TDate
-  reporterAddr: TAddr
+  reporter_addr: TAddr
 }
 
 export interface submitReportStr {
-  type: "bloom-iq-submit-report"
+  type: "bloomiq-submit_report"
   timestamp: TDate
-  subjectAddr: TAddr
+  subject_addr: TAddr
   report: reportStr<AD.IBaseAttUtility | AD.IBaseAttLoan> //, encrypted for subject public key),
-  reportSha: TSha256
+  report_sha: TSha256
 }
 
 export interface revokeReportStr {
-  type: "bloom-iq-revoke-report"
+  type: "bloomiq-revoke_report"
   timestamp: TDate
-  reportId: TUuid
-  subjectAddr: TAddr
+  report_id: TUuid
+  subject_addr: TAddr
 }
 
 export interface performAttestationStr {
-  type: "bloom-iq-perform-attestation"
+  type: "bloomiq-perform_attestation"
   timestamp: TDate
-  aggregatorAddr: TAddr
+  aggregator_addr: TAddr
 }
 
 export interface reportStr<AttestationType> {
-  nonce: "fbfa9ebca9b0993298fab098ca..."
-  attestationData: HL.IClaimNode // of AttestationType
+  nonce: TNonce
+  attestation_data: HL.IClaimNode // of AttestationType
 }
