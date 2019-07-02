@@ -7,8 +7,15 @@ export type T = {
   created: string
   updated: string
 
-  permit_text: any
+  subject_id: string
+  subject_addr: Buffer
+
+  reporter_id: string
+  reporter_addr: Buffer
+
+  permit_plaintext: any
   permit_sig: Buffer
-  revoke_text: any
+
+  revoke_plaintext: any
   revoke_sig: Buffer
 }

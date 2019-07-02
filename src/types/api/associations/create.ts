@@ -1,17 +1,19 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
 
 export type reqBody = {
-  allowAssociation: {
-    subjectSig: string
+  allow_association: {
+    subject_sig: string
     plaintext: string
   }
 }
 export type reqParams = {}
-export type reqQuery = {}
+export type reqQuery = {
+  subject_addr: string
+}
 
 export type respBody = {
   success: true
-  associationId: string
+  association_id: string
 }
 
 export type req = TReq<reqBody, reqParams>

@@ -1,8 +1,8 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
-import * as Association from "@src/types/models/association"
+import * as Association from "@src/types/models/reporter"
 
 export type reqBody = {
-  show_association: {
+  list_reporter: {
     plaintext: string
     subject_sig: string
   }
@@ -13,7 +13,8 @@ export type reqQuery = {
 }
 
 export type respBody = {
-  association: Association.TS
+  success: true
+  reporters: Array<Association.TS>
 }
 
 export type req = TReq<reqBody, reqParams>
