@@ -73,53 +73,136 @@ export const recoverEthAddressFromDigest = (
  *   from `web3.eth.sign`. The `personal.sign` function is for ascii text the user sees. The `eth.sign`
  *   is for signing raw transaction data.
  *
- * @param signedText a string like "Hello, Bloom!" that the user signed in order to produce `rpcSig`
+ * @param text a string like "Hello, Bloom!" that the user signed in order to produce `rpcSig`
  * @param rpcSig a user provided RPC signature string (like "0x123456") produced from the `signedText`
  * @return The ETH address used to sign the text
  */
 export const recoverEthAddressFromPersonalRpcSig = (
-  signedText: string,
+  text: string,
   rpcSig: string
 ): Buffer => {
   // Hash the text the same way web3 does with the weird "Ethereum Signed Message" text
-  const hashed = EthU.hashPersonalMessage(EthU.toBuffer(signedText))
+  const hashed = EthU.hashPersonalMessage(EthU.toBuffer(text))
 
   return recoverEthAddressFromDigest(hashed, rpcSig)
 }
 
-export const checkFieldsPresent = async (obj: any, keys: Array<string>) => {
-  keys.forEach((f: string) => {
-    if (!(f in obj)) throw new Error("Field missing: " + f)
+export type TSuccess = {
+  success: true
+}
+export type TFieldErr = {
+  success: false
+  field: string
+  err: string
+  details: any
+}
+
+export type TFieldResult = TSuccess | TFieldErr
+
+// Validation functions
+export const fieldErr = (
+  field: string,
+  err: string,
+  details?: any
+): TFieldErr => {
+  return {
+    success: false,
+    field,
+    err,
+    details
+  }
+}
+
+export const success: TSuccess = { success: true }
+
+export const checkFieldsPresent = async (
+  obj: any,
+  keys: Array<string>
+): Promise<Array<TFieldResult>> => {
+  return keys.map((f: string) => {
+    if (!(f in obj)) {
+      return fieldErr(f, "field_missing")
+    } else {
+      return success
+    }
   })
 }
 
-export const checkTimestamp = async (obj: any) => {
+export const checkTimestamp = async (obj: any): Promise<TFieldResult> => {
   let e = await envPr
   let now = new Date()
   let threshold = D.subSeconds(now, e.sig_max_seconds_ago)
   let comparison = D.compareAsc(threshold, D.parse(obj.timestamp))
   if (comparison === 1) {
-    throw new Error(
-      `Signature timestamp ${obj.timestamp} is too old.  Needed a date ${
-        e.sig_max_seconds_ago
-      } seconds before now (compared against ${threshold})`
-    )
+    return fieldErr("timestamp", "too_old", {
+      timestamp: obj.timestamp,
+      max_seconds_ago: e.sig_max_seconds_ago,
+      threshold
+    })
   }
+  return success
 }
 
-export const checkAggregatorAddr = async (obj: any) => {
+export const checkAggregatorAddr = async (obj: any): Promise<TFieldResult> => {
   let e = await envPr
   if (e.aggregator_addresses.indexOf(obj.aggregator_addr) === -1) {
-    throw new Error(
-      `Invalid aggregator address, couldn't find ${
-        obj.aggregator_addr
-      } in ${JSON.stringify(e.aggregator_addresses)}`
-    )
+    return fieldErr("aggregator_addr", "unlisted", {
+      specified: obj.aggregator_addr,
+      listed: e.aggregator_addresses
+    })
   }
+  return success
 }
 
-export const checkType = async (obj: any, sigType: string) => {
+export const checkType = async (
+  obj: any,
+  sigType: string
+): Promise<TFieldResult> => {
   if (obj.type !== sigType) {
-    throw new Error(`Invalid type for ${sigType}: ${obj.type}`)
+    return fieldErr("type", "invalid", {
+      specified: obj.Type,
+      required: obj.type
+    })
   }
+  return success
+}
+
+export const checkValidEthAddress = async (
+  obj: any,
+  field: string
+): Promise<TFieldResult> => {
+  let addr = obj[field]
+  if (typeof addr === "undefined") {
+    return fieldErr(field, "not_specified")
+  }
+  if (typeof addr !== "string") {
+    return fieldErr(field, "not_string")
+  }
+  if (addr.length !== 42) {
+    return fieldErr(field, "invalid_length")
+  }
+  return success
+}
+
+export const checkValidSig = async (
+  obj: any,
+  field: any,
+  text: string,
+  addr: string
+): Promise<TFieldResult> => {
+  let sig = obj[field]
+  if (!isValidSignatureString(sig)) {
+    return fieldErr(field, "invalid_sig_format")
+  }
+  let resultAddr = recoverEthAddressFromPersonalRpcSig(text, sig)
+  let addrBuffer = EthU.toBuffer(addr)
+  if (resultAddr !== addrBuffer) {
+    return fieldErr(field, "invalid_sig", {
+      text,
+      sig,
+      expectedAddr: addr,
+      resultAddr
+    })
+  }
+  return success
 }

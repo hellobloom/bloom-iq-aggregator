@@ -8,10 +8,25 @@ let allowAssociationFields: Array<keyof S.IAllowAssociationStr> = [
 ]
 let allowAssociationType: S.IAllowAssociationStr["type"] =
   "bloomiq-allow_association"
-export const validateAllowAssociation = (txt: string, sig: Buffer) => {
+export const validateAllowAssociation = async (
+  txt: string,
+  sig: Buffer
+): Promise<B.TSuccess | Array<B.TFieldErr>> => {
   let p: Partial<S.IAllowAssociationStr> = JSON.parse(txt)
-  B.checkFieldsPresent(p, allowAssociationFields)
-  B.checkTimestamp(p)
-  B.checkAggregatorAddr(p)
-  B.checkType(p, allowAssociationType)
+  let errors: Array<B.TFieldResult> = [
+    ...(await B.checkFieldsPresent(p, allowAssociationFields)),
+    await B.checkTimestamp(p),
+    await B.checkAggregatorAddr(p),
+    await B.checkType(p, allowAssociationType)
+  ]
+
+  let filteredErrors: Array<B.TFieldErr> = errors.filter(
+    (x): x is B.TFieldErr => x.success === false
+  )
+
+  if (filteredErrors.length === 0) {
+    return { success: true }
+  } else {
+    return filteredErrors
+  }
 }
