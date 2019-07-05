@@ -18,4 +18,4 @@ export type respBody = {
 }
 
 export type req = TReq<reqBody, reqParams>
-export type resp = TRespE<respBody>
+export type res = TRespE<respBody>

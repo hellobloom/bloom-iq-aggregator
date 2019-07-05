@@ -6,7 +6,7 @@ export type TDate = string
 export type TDatetime = string
 export type TUuid = string
 export type TAddr = string
-export type TSha256 = string
+export type THash = string
 export type TNonce = string
 
 //
@@ -72,7 +72,7 @@ export interface ISubmitReportStr {
   timestamp: TDate
   subject_addr: TAddr
   report: IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan> //, encrypted for subject public key),
-  report_sha: TSha256
+  report_sha: THash
 }
 
 export interface IRevokeReportStr {
@@ -124,6 +124,7 @@ export interface IListAttestationStr {
 }
 
 export interface IReportStr<AttestationType> {
+  type: "bloomiq-report"
   nonce: TNonce
   attestation_data: HL.IClaimNode // of AttestationType
 }
