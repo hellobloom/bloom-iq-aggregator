@@ -228,3 +228,14 @@ export const globalSigChecks = async <T extends any>(
     await checkValidSig(sig, sigField, txt, addr)
   ]
 }
+
+export const errorCheck = (
+  errors: Array<TFieldErr>
+): Array<TFieldErr> | TSuccess => {
+  if (errors.length === 0) {
+    let resp: TSuccess = { success: true }
+    return resp
+  } else {
+    return errors
+  }
+}

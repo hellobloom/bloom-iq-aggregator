@@ -29,11 +29,7 @@ export const validateAllowAssociation = async (
     await B.checkAggregatorAddr(p)
   ])
 
-  if (errors.length === 0) {
-    return { success: true }
-  } else {
-    return errors
-  }
+  return B.errorCheck(errors)
 }
 
 // IListAssociationStr
@@ -62,9 +58,5 @@ export const validateListAssociation = async (
     ))
   ])
 
-  if (errors.length === 0) {
-    return { success: true }
-  } else {
-    return errors
-  }
+  return B.errorCheck(errors)
 }
