@@ -14,12 +14,12 @@ const show = async (req: T.getReport.req): Promise<T.getReport.res> => {
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/reports",
+    paths: "/api/v1/:subject_addr/reports",
     fn: index
   },
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/reports/:reportId",
+    paths: "/api/v1/:subject_addr/reports/:reportId",
     fn: show
   }
 ]

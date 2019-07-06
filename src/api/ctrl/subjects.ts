@@ -18,17 +18,17 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "post",
-    paths: "/api/v1/:subjectAddr/association",
+    paths: "/api/v1/:subject_addr/association",
     fn: create
   },
   {
     method: "post",
-    paths: "/api/v1/:subjectAddr/association",
+    paths: "/api/v1/:subject_addr/association",
     fn: create
   },
   {
     method: "del",
-    paths: "/api/v1/:subjectAddr/association",
+    paths: "/api/v1/:subject_addr/association",
     fn: del
   }
 ]

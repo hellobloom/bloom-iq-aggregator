@@ -7,10 +7,11 @@ export type reqBody = {
     plaintext: string
   }
 }
-export type reqParams = {}
-export type reqQuery = {
+export type reqParams = {
   subject_addr: string
 }
+
+export type reqQuery = {}
 
 export type respBody = {
   success: true

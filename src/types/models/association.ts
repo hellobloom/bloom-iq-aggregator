@@ -13,6 +13,6 @@ export type T = {
   allow_association_sig: Buffer
   allow_association_plaintext: string
 
-  revoke_association_sig: Buffer
-  revoke_association_plaintext: string
+  revoke_association_sig?: Buffer
+  revoke_association_plaintext?: string
 }

@@ -18,12 +18,12 @@ const getReporter = async (
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/reporters",
+    paths: "/api/v1/:subject_addr/reporters",
     fn: getReporters
   },
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/reporters/:reporterId",
+    paths: "/api/v1/:subject_addr/reporters/:reporterId",
     fn: getReporter
   }
 ]

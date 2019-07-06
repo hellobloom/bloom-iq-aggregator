@@ -1,6 +1,7 @@
 import * as S from "@src/types/sigs"
 import * as B from "@src/lib/sigs/base"
 
+// IAllowAssociationStr
 let allowAssociationFields: Array<keyof S.IAllowAssociationStr> = [
   "type",
   "timestamp",
@@ -8,25 +9,62 @@ let allowAssociationFields: Array<keyof S.IAllowAssociationStr> = [
 ]
 let allowAssociationType: S.IAllowAssociationStr["type"] =
   "bloomiq-allow_association"
+
 export const validateAllowAssociation = async (
   txt: string,
-  sig: Buffer
+  sig: string,
+  addr: string
 ): Promise<B.TSuccess | Array<B.TFieldErr>> => {
   let p: Partial<S.IAllowAssociationStr> = JSON.parse(txt)
-  let errors: Array<B.TFieldResult> = [
-    ...(await B.checkFieldsPresent(p, allowAssociationFields)),
-    await B.checkTimestamp(p),
-    await B.checkAggregatorAddr(p),
-    await B.checkType(p, allowAssociationType)
-  ]
+  let errors: Array<B.TFieldErr> = B.onlyErrors([
+    ...(await B.globalSigChecks(
+      p,
+      allowAssociationFields,
+      allowAssociationType,
+      "subject_sig",
+      sig,
+      txt,
+      addr
+    )),
+    await B.checkAggregatorAddr(p)
+  ])
 
-  let filteredErrors: Array<B.TFieldErr> = errors.filter(
-    (x): x is B.TFieldErr => x.success === false
-  )
-
-  if (filteredErrors.length === 0) {
+  if (errors.length === 0) {
     return { success: true }
   } else {
-    return filteredErrors
+    return errors
+  }
+}
+
+// IListAssociationStr
+let listAssociationFields: Array<keyof S.IListAssociationStr> = [
+  "type",
+  "timestamp"
+]
+let listAssociationType: S.IListAssociationStr["type"] =
+  "bloomiq-list_association"
+
+export const validateListAssociation = async (
+  txt: string,
+  sig: string,
+  addr: string
+): Promise<B.TSuccess | Array<B.TFieldErr>> => {
+  let p: Partial<S.IListAssociationStr> = JSON.parse(txt)
+  let errors: Array<B.TFieldErr> = B.onlyErrors([
+    ...(await B.globalSigChecks(
+      p,
+      listAssociationFields,
+      listAssociationType,
+      "subject_sig",
+      sig,
+      txt,
+      addr
+    ))
+  ])
+
+  if (errors.length === 0) {
+    return { success: true }
+  } else {
+    return errors
   }
 }

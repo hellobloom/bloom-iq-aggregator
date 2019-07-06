@@ -12,10 +12,10 @@ export type reqBody = {
         reporter_sig: string
       }
 }
-export type reqParams = {}
-export type reqQuery = {
+export type reqParams = {
   subject_addr: string
 }
+export type reqQuery = {}
 
 export type respBody = {
   success: true

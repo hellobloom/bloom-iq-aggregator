@@ -6,15 +6,15 @@ export type reqBody = {
     plaintext: string
   }
 }
-export type reqParams = {}
-export type reqQuery = {
+export type reqParams = {
   subject_addr: string
 }
+export type reqQuery = {}
 
 export type respBody = {
   success: true
   association_id: string
 }
 
-export type req = TReq<reqBody, reqParams>
+export type req = TReq<reqBody, reqParams, reqQuery>
 export type res = TRespE<respBody>

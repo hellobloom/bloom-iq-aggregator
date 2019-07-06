@@ -14,10 +14,10 @@ export type reqBody = {
         report_id: string
       }
 }
-export type reqParams = {}
-export type reqQuery = {
+export type reqParams = {
   subject_addr: string
 }
+export type reqQuery = {}
 
 export type respBody = {
   report: Report.TS

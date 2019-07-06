@@ -23,22 +23,22 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/attestations",
+    paths: "/api/v1/:subject_addr/attestations",
     fn: list
   },
   {
     method: "get",
-    paths: "/api/v1/:subjectAddr/attestations/:attestation_id",
+    paths: "/api/v1/:subject_addr/attestations/:attestation_id",
     fn: show
   },
   {
     method: "post",
-    paths: "/api/v1/:subjectAddr/attestations",
+    paths: "/api/v1/:subject_addr/attestations",
     fn: create
   },
   {
     method: "delete",
-    paths: "/api/v1/:subjectAddr/attestations/:attestation_id",
+    paths: "/api/v1/:subject_addr/attestations/:attestation_id",
     fn: del
   }
 ]

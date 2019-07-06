@@ -185,12 +185,11 @@ export const checkValidEthAddress = async (
 }
 
 export const checkValidSig = async (
-  obj: any,
+  sig: any,
   field: any,
   text: string,
   addr: string
 ): Promise<TFieldResult> => {
-  let sig = obj[field]
   if (!isValidSignatureString(sig)) {
     return fieldErr(field, "invalid_sig_format")
   }
@@ -205,4 +204,27 @@ export const checkValidSig = async (
     })
   }
   return success
+}
+
+export const onlyErrors = (
+  results: Array<TFieldErr | TSuccess>
+): Array<TFieldErr> => {
+  return results.filter((x): x is TFieldErr => x.success === false)
+}
+
+export const globalSigChecks = async <T extends any>(
+  sigObj: T,
+  fields: Array<keyof T>,
+  sigType: T["type"],
+  sigField: string,
+  sig: string,
+  txt: string,
+  addr: string
+) => {
+  return [
+    ...(await checkFieldsPresent(sigObj, fields)),
+    await checkTimestamp(sigObj),
+    await checkType(sigObj, sigType),
+    await checkValidSig(sig, sigField, txt, addr)
+  ]
 }
