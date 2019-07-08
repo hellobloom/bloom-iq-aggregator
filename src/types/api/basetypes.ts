@@ -1,3 +1,5 @@
+import { TValidationErr } from "@src/lib/sigs/base"
+
 export type TApiRoutes<TRq, TRs> = {
   method: TExpressHttpMethodFns
   paths: TExpressPathParams
@@ -50,7 +52,8 @@ export interface IStringResponse extends IBaseResponse {
 export interface IRespErr extends IBaseResponse {
   json: {
     success: false
-    error: string | Error
+    error?: string | Error
+    validation?: TValidationErr
   }
 }
 

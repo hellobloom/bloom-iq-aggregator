@@ -1,7 +1,28 @@
 import * as EthU from "ethereumjs-util"
 import * as D from "date-fns"
 import * as wallet from "ethereumjs-wallet"
+// import * as S from "@src/types/sigs"
 import { envPr } from "@src/environment"
+
+export type TSuccess<TSigType = undefined> = {
+  success: true
+  obj?: TSigType
+}
+export type TFieldErr = {
+  success: false
+  field: string
+  err: string
+  details: any
+}
+
+export type TValidationErr = {
+  success: false
+  errors: Array<TFieldErr>
+}
+
+export type TFieldResult = TSuccess | TFieldErr
+
+export type TValidationResult<TSigType> = TSuccess<TSigType> | TValidationErr
 
 /**
  * Validate a hex encoded signature string
@@ -86,18 +107,6 @@ export const recoverEthAddressFromPersonalRpcSig = (
 
   return recoverEthAddressFromDigest(hashed, rpcSig)
 }
-
-export type TSuccess = {
-  success: true
-}
-export type TFieldErr = {
-  success: false
-  field: string
-  err: string
-  details: any
-}
-
-export type TFieldResult = TSuccess | TFieldErr
 
 // Validation functions
 export const fieldErr = (
@@ -223,19 +232,31 @@ export const globalSigChecks = async <T extends any>(
 ) => {
   return [
     ...(await checkFieldsPresent(sigObj, fields)),
+    await checkAggregatorAddr(sigObj),
     await checkTimestamp(sigObj),
     await checkType(sigObj, sigType),
     await checkValidSig(sig, sigField, txt, addr)
   ]
 }
 
-export const errorCheck = (
-  errors: Array<TFieldErr>
-): Array<TFieldErr> | TSuccess => {
+export const errorCheck = <TSigType>(
+  errors: Array<TFieldErr>,
+  sigObj: TSigType
+): TValidationResult<TSigType> => {
   if (errors.length === 0) {
-    let resp: TSuccess = { success: true }
+    let resp = { success: true, obj: sigObj } as TSuccess<TSigType>
     return resp
   } else {
-    return errors
+    return { success: false, errors }
   }
+}
+
+export const validationSucceeded = (
+  validation: Array<TFieldErr> | TSuccess
+) => {
+  return !(validation instanceof Array)
+}
+
+export const parseSigText = <TSigType>(text: string) => {
+  return JSON.parse(text) as TSigType
 }

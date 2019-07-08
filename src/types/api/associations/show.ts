@@ -9,6 +9,7 @@ export type reqBody = {
 }
 export type reqParams = {
   subject_addr: string
+  association_id: string
 }
 export type reqQuery = {}
 
