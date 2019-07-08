@@ -5,6 +5,8 @@ dotenv.config()
 export const env = async () => {
   let p = process.env
   return {
+    appPort: envVar(p, "APP_PORT", "int"),
+    expressBind: envVar(p, "EXPRESS_BIND", "string"),
     aggregator_addresses: envVar(p, "AGGREGATOR_ADDRESSES", "json"),
     sig_max_seconds_ago: envVar(p, "SIG_MAX_SECONDS_AGO", "int")
   }

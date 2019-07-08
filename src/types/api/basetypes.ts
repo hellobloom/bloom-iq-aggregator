@@ -7,17 +7,17 @@ export type TApiRoutes<TRq, TRs> = {
   middleware?: THandlerOptions
 }
 
-export type TCurrentUserMock = {
-  user: any
-}
+/* export type TCurrentSubjectMock = {
+  subject: any
+} */
 
 export type TBaseRequest = {
   body: {}
   params: {}
   query: {}
   headers: {}
-  user: () => Promise<null | TCurrentUserMock>
-  requireUser: () => Promise<TCurrentUserMock>
+  /* subject: () => Promise<null | TCurrentSubjectMock>
+  requireSubject: () => Promise<TCurrentSubjectMock> */
   signedCookies: {}
 }
 
@@ -76,7 +76,7 @@ export type TApiHandler<TRq = TBaseRequest, TRs = TResponse> = (
 ) => Promise<TRs>
 
 export type THandlerOptions = {
-  userRequired: boolean
+  subjectIsActive: boolean
   adminRequired: boolean
   userRateLimited?: number
   ipRateLimited?: number
@@ -84,18 +84,18 @@ export type THandlerOptions = {
   custom?: any[]
 }
 
-export const unauthenticatedHandlerOptions = {
-  userRequired: false,
+export const HandlerOptions = {
+  subjectIsActive: false,
   adminRequired: false
 }
 
 export const userHandlerOptions = {
-  userRequired: true,
+  subjectIsActive: true,
   adminRequired: false
 }
 
 export const adminHandlerOptions = {
-  userRequired: false,
+  subjectIsActive: false,
   adminRequired: true
 }
 

@@ -1,6 +1,6 @@
 // import { renderError } from "@src/api/renderError"
 import { TApiRoutes } from "@src/types/api/basetypes"
-import * as T from "@src/types/api/report_permissions"
+import * as T from "@src/types/api/reporters"
 import { Subject, Reporter, ReportPermission } from "@src/models"
 import * as S from "@src/lib/sigs/reporter"
 import { toBuffer } from "ethereumjs-util"
@@ -136,22 +136,26 @@ const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
     paths: "/api/v1/:subject_addr/reporters",
-    fn: list
+    fn: list,
+    middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "get",
     paths: "/api/v1/:subject_addr/reporters/:reporter_addr",
-    fn: show
+    fn: show,
+    middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "post",
     paths: "/api/v1/:subject_addr/reporters",
-    fn: create
+    fn: create,
+    middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "delete",
     paths: "/api/v1/:subject_addr/reporters/:reporter_addr",
-    fn: del
+    fn: del,
+    middleware: { subjectIsActive: true, adminRequired: false }
   }
 ]
 

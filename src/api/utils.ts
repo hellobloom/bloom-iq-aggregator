@@ -1,20 +1,18 @@
-import * as express from 'express-serve-static-core'
-import {T as AppT} from '@src/models/app'
-
-import {apiOnly} from '@src/api/requestHandlers'
-
+import * as express from "express-serve-static-core"
+import { subjectIsActiveMiddleware } from "@src/api/middleware"
 import {
   THandlerOptions,
   TBaseRequest,
   TCookie,
   TClearCookie,
-  TExpressHttpMethodFns,
-} from '@src/types/api/basetypes'
+  TExpressHttpMethodFns
+} from "@src/types/api/basetypes"
 
-import {DEFAULT_ERROR_MESSAGE} from '@src/api/renderError'
+import { DEFAULT_ERROR_MESSAGE } from "@src/api/renderError"
 
 export const defaultHandlerOptions = {
-  apiOnly: true,
+  subjectIsActive: true,
+  adminRequired: false
 }
 
 export const getHandlers = (
@@ -22,9 +20,8 @@ export const getHandlers = (
   method: TExpressHttpMethodFns
 ) => {
   let handlers: express.RequestHandler[] = []
-
-  if (options.apiOnly) {
-    handlers.push(apiOnly)
+  if (options.subjectIsActive) {
+    handlers.push(subjectIsActiveMiddleware)
   }
   if (options.custom) {
     options.custom.forEach((fn: any) => {
@@ -34,9 +31,7 @@ export const getHandlers = (
   return handlers
 }
 
-type TRequestHelpers = {
-  app?: AppT
-}
+type TRequestHelpers = {}
 
 export const fnToExpressHandler = (fn: Function): express.RequestHandler => {
   return async (
@@ -50,16 +45,16 @@ export const fnToExpressHandler = (fn: Function): express.RequestHandler => {
       try {
         var fnResp = await fn(baseReq)
       } catch (err) {
-        console.log('Whoa!  Unhandled error from API handler.', err)
+        console.log("Whoa!  Unhandled error from API handler.", err)
         fnResp = {
           json: {
             success: false,
-            error: DEFAULT_ERROR_MESSAGE,
+            error: DEFAULT_ERROR_MESSAGE
           },
-          status: 500,
+          status: 500
         }
       }
-      let body: any = ''
+      let body: any = ""
       if (fnResp.clearCookies) {
         fnResp.clearCookies.map((x: TClearCookie) => res.clearCookie(x))
       }
@@ -73,7 +68,7 @@ export const fnToExpressHandler = (fn: Function): express.RequestHandler => {
       if (fnResp.body) {
         body = fnResp.body
       } else if (fnResp.error) {
-        body = {success: false, error: fnResp.error} // JSON.stringify({success: false, error: fnResp.error})
+        body = { success: false, error: fnResp.error } // JSON.stringify({success: false, error: fnResp.error})
       } else if (fnResp.json) {
         body = fnResp.json
       }
@@ -84,7 +79,7 @@ export const fnToExpressHandler = (fn: Function): express.RequestHandler => {
         next()
       }
     } catch (err) {
-      console.log('Unhandled error in fnToExpressHandler', err)
+      console.log("Unhandled error in fnToExpressHandler", err)
       throw err
     }
   }

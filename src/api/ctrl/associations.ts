@@ -99,22 +99,26 @@ const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
     paths: "/api/v1/:subject_addr/associations",
-    fn: list
+    fn: list,
+    middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "get",
     paths: "/api/v1/:subject_addr/associations/:association_id",
-    fn: show
+    fn: show,
+    middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "post",
     paths: "/api/v1/:subject_addr/associations",
-    fn: create
+    fn: create,
+    middleware: { subjectIsActive: false, adminRequired: false }
   },
   {
     method: "delete",
     paths: "/api/v1/:subject_addr/associations/:association_id",
-    fn: del
+    fn: del,
+    middleware: { subjectIsActive: true, adminRequired: false }
   }
 ]
 
