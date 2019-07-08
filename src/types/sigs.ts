@@ -59,7 +59,7 @@ export interface IShowReporterStr extends IBaseSigStr {
   type: "bloomiq-show_reporter"
   timestamp: TDatetime
   aggregator_addr: TAddr
-  reporter_id: TUuid
+  reporter_addr: TAddr
 }
 
 export interface IRevokeReporterStr extends IBaseSigStr {

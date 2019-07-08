@@ -7,11 +7,11 @@ export type T = {
   updated: string
 
   subject_id: string
-  subject_addr: string
+  subject_addr: Buffer
 
   reporter_id: string
-  reporter_addr: string
-  reporter_sig: string
+  reporter_addr: Buffer
+  reporter_sig: Buffer
 
-  report_hash: string
+  report_hash: Buffer
 }

@@ -1,5 +1,5 @@
 import * as B from "@src/models/base"
-import { T as _T, TS as _TS } from "@src/types/models/report_permission"
+import { T as _T, TS as _TS } from "@src/types/models/report"
 import { bufferToHex } from "ethereumjs-util"
 
 export type T = _T
@@ -10,17 +10,17 @@ export type TS = _TS
 export const serialize = (a: T): TS => {
   return {
     ...a,
-    permit_sig: bufferToHex(a.permit_sig),
-    revoke_sig: bufferToHex(a.revoke_sig),
     subject_addr: bufferToHex(a.subject_addr),
-    reporter_addr: bufferToHex(a.reporter_addr)
+    reporter_addr: bufferToHex(a.reporter_addr),
+    reporter_sig: bufferToHex(a.reporter_sig),
+    report_hash: bufferToHex(a.report_hash)
   }
 }
 
 export type TID = Pick<T, "id">["id"]
 export type TAttr = keyof T
 
-export const Q = B.db("report_permissions")
+export const Q = B.db("reports")
 
 export const Create = B.mkCreate<T>(Q)
 export const FindById = B.mkFindById<T, "id">(Q, "id")

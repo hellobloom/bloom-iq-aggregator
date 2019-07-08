@@ -6,4 +6,5 @@ export type T = {
   id?: string // uuid
   created?: string
   updated?: string
+  addr: Buffer
 }

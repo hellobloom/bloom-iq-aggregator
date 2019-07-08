@@ -176,7 +176,7 @@ export const checkType = async (
   return success
 }
 
-export const checkValidEthAddress = async (
+export const checkValidAddr = async (
   obj: any,
   field: string
 ): Promise<TFieldResult> => {

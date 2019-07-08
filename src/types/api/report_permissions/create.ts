@@ -8,12 +8,12 @@ export type reqBody = {
 }
 export type reqParams = {
   subject_addr: string
+  reporter_addr: string
 }
 export type reqQuery = {}
 
 export type respBody = {
   success: true
-  reporter_id: string
 }
 
 export type req = TReq<reqBody, reqParams>

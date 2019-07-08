@@ -1,5 +1,6 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
-import * as Association from "@src/types/models/reporter"
+import * as ReportPermission from "@src/types/models/report_permission"
+import * as Reporter from "@src/types/models/reporter"
 
 export type reqBody = {
   list_reporter: {
@@ -14,7 +15,8 @@ export type reqQuery = {}
 
 export type respBody = {
   success: true
-  reporters: Array<Association.TS>
+  report_permissions: Array<ReportPermission.TS>
+  reporters: Array<Reporter.TS>
 }
 
 export type req = TReq<reqBody, reqParams>
