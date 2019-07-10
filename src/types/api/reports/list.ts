@@ -2,15 +2,10 @@ import { TRespE, TReq } from "@src/types/api/basetypes"
 import * as Report from "@src/types/models/report"
 
 export type reqBody = {
-  list_report:
-    | {
-        plaintext: string
-        subject_sig: string
-      }
-    | {
-        plaintext: string
-        reporter_sig: string
-      }
+  list_report: {
+    plaintext: string
+    subject_sig: string
+  }
 }
 export type reqParams = {
   subject_addr: string

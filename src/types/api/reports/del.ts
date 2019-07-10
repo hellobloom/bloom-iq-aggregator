@@ -1,15 +1,16 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
 
 export type reqBody = {
-  reporter_addr: string
   revoke_report: {
-    reporter_sig: string
     plaintext: string
+    subject_sig: string
   }
 }
 export type reqParams = {
   subject_addr: string
+  reporter_addr: string
 }
+
 export type reqQuery = {}
 
 export type respBody = {
