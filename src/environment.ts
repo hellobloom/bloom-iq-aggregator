@@ -2,13 +2,22 @@ import * as dotenv from "dotenv"
 
 dotenv.config()
 
+export type TWebhookIn = {
+  keySha: string // hash of incoming key
+}
+export type TWebhookOut = {
+  address: string // outgoing host
+  key: string // outgoing key
+}
+
 export const env = async () => {
   let p = process.env
   return {
     appPort: envVar(p, "APP_PORT", "int"),
     expressBind: envVar(p, "EXPRESS_BIND", "string"),
     aggregator_addresses: envVar(p, "AGGREGATOR_ADDRESSES", "json"),
-    sig_max_seconds_ago: envVar(p, "SIG_MAX_SECONDS_AGO", "int")
+    sig_max_seconds_ago: envVar(p, "SIG_MAX_SECONDS_AGO", "int"),
+    prometheus: envVar(p, "PROMETHEUS", "json") as TWebhookIn
   }
 }
 

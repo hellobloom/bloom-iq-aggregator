@@ -1,6 +1,8 @@
+import { envPr } from "@src/environment"
 import * as express from "express"
 import * as U from "@src/lib/util"
 import { toBuffer } from "ethereumjs-util"
+import { sha256 } from "ethereumjs-util"
 
 export const getVersionedApiPath = (url: string, version: number = 1) => {
   const unversionedUrlRegex = /\/api\/([^v].*)/gi
@@ -56,4 +58,26 @@ export const subjectIsActiveMiddleware: express.RequestHandler = async (
   res
     .status(400)
     .json({ success: false, error: "no_active_association_for_subject" })
+}
+
+export const hasValidHashFor = (str: string, cnf: { keySha: string }) => {
+  const hash = sha256(str).toString("hex")
+  return hash === cnf.keySha
+}
+
+export const prometheusWebhookOnly: express.RequestHandler = async (
+  req: express.Request,
+  res: express.Response,
+  next: express.NextFunction
+) => {
+  const e = await envPr
+
+  const t = (req.headers.authorization as string).replace("Bearer ", "")
+  if (hasValidHashFor(t, e.prometheus)) {
+    next()
+  } else {
+    // 415 = Unsupported media type
+    console.log("prometheusWebhookOnly violation")
+    res.status(403).send('{"success":false,"message":"Unauthorized"}')
+  }
 }
