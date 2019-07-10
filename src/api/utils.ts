@@ -23,6 +23,9 @@ export const getHandlers = (
   if (options.subjectIsActive) {
     handlers.push(subjectIsActiveMiddleware)
   }
+  /*if (options.adminRequired) {
+    handlers.push(adminRequired)
+  }*/
   if (options.custom) {
     options.custom.forEach((fn: any) => {
       handlers.push(fn)

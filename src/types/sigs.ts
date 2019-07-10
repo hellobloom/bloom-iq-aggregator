@@ -1,5 +1,5 @@
 import {
-  AttestationData as AD,
+  // AttestationData as AD,
   HashingLogic as HL
 } from "@bloomprotocol/attestations-lib"
 export type TDate = string
@@ -76,8 +76,8 @@ export interface ISubmitReportStr extends IBaseSigStr {
   timestamp: TDatetime
   aggregator_addr: TAddr
   subject_addr: TAddr
-  report: IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan> //, encrypted for subject public key),
   report_sha: THash
+  // sha256 of IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan>, which concurrently to this sig message is encrypted for subject public key
 }
 
 export interface IRevokeReportStr extends IBaseSigStr {
@@ -85,6 +85,7 @@ export interface IRevokeReportStr extends IBaseSigStr {
   timestamp: TDatetime
   aggregator_addr: TAddr
   report_id: TUuid
+  report_sha: THash
   subject_addr: TAddr
 }
 
