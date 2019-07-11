@@ -1,14 +1,16 @@
-import { TRespE, TReq } from "@src/types/api/basetypes"
+import {TRespE, TReq} from '@src/types/api/basetypes'
 
 export type reqBody = {
-  allow_report: {
-    subject_sig: string
+  submit_report: {
+    reporter_sig: string
     plaintext: string
   }
+  reporter_addr: string
+  report_hash: string
+  report_encrypted: string
 }
 export type reqParams = {
   subject_addr: string
-  reporter_addr: string
 }
 export type reqQuery = {}
 

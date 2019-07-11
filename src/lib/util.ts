@@ -1,4 +1,7 @@
-import { Association, Subject, Reporter, ReportPermission } from "@src/models"
+import {
+  Association,
+  /* Subject, Reporter, */ ReportPermission
+} from "@src/models"
 
 export const subjectIsActive = async (subject_addr: Buffer) => {
   return (
@@ -12,13 +15,13 @@ export const subjectIsActive = async (subject_addr: Buffer) => {
 }
 
 export const canReportOnSubject = async (
-  reporter: Reporter.T,
-  subject: Subject.T
+  reporter_addr: Buffer,
+  subject_addr: Buffer
 ) => {
   return
   ;(await ReportPermission.Q.where({
-    subject_addr: subject.addr,
-    reporter_addr: reporter.addr
+    subject_addr,
+    reporter_addr
   })
     .whereNull("revoke_sig")
     .whereNull("revoke_plaintext")

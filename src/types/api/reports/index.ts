@@ -1,5 +1,5 @@
 import * as create from "./create"
-import * as del from "./del"
+import * as revoke from "./revoke"
 import * as listAsSubject from "./listAsSubject"
 import * as listAsReporter from "./listAsReporter"
 import * as showAsSubject from "./showAsSubject"
@@ -7,7 +7,7 @@ import * as showAsReporter from "./showAsReporter"
 
 export {
   create,
-  del,
+  revoke,
   listAsSubject,
   listAsReporter,
   showAsSubject,

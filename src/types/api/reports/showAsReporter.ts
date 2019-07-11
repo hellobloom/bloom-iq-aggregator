@@ -4,12 +4,12 @@ import * as Report from "@src/types/models/report"
 export type reqBody = {
   show_report: {
     plaintext: string
-    subject_sig: string
+    reporter_sig: string
   }
 }
 export type reqParams = {
-  subject_addr: string
   reporter_addr: string
+  report_id: string
 }
 export type reqQuery = {}
 

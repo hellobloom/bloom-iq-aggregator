@@ -1,7 +1,7 @@
 import {
   // AttestationData as AD,
-  HashingLogic as HL
-} from "@bloomprotocol/attestations-lib"
+  HashingLogic as HL,
+} from '@bloomprotocol/attestations-lib'
 export type TDate = string
 export type TDatetime = string
 export type TUuid = string
@@ -19,53 +19,53 @@ export interface IBaseSigStr {
 // ASSOCIATIONS
 ////////////////////////////
 export interface IAllowAssociationStr extends IBaseSigStr {
-  type: "bloomiq-allow_association"
+  type: 'bloomiq-allow_association'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
 export interface IListAssociationStr extends IBaseSigStr {
-  type: "bloomiq-list_association"
+  type: 'bloomiq-list_association'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
 export interface IShowAssociationStr extends IBaseSigStr {
-  type: "bloomiq-show_association"
+  type: 'bloomiq-show_association'
   timestamp: TDatetime
   aggregator_addr: TAddr
   association_id: TUuid
 }
 
 export interface IRevokeAssociationStr extends IBaseSigStr {
-  type: "bloomiq-revoke_association"
+  type: 'bloomiq-revoke_association'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
 // REPORTERS
 export interface IAllowReporterStr extends IBaseSigStr {
-  type: "bloomiq-allow_reporter"
+  type: 'bloomiq-allow_reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
   reporter_addr: TAddr
 }
 
 export interface IListReporterStr extends IBaseSigStr {
-  type: "bloomiq-list_reporter"
+  type: 'bloomiq-list_reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
 export interface IShowReporterStr extends IBaseSigStr {
-  type: "bloomiq-show_reporter"
+  type: 'bloomiq-show_reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
   reporter_addr: TAddr
 }
 
 export interface IRevokeReporterStr extends IBaseSigStr {
-  type: "bloomiq-revoke_reporter"
+  type: 'bloomiq-revoke_reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
   reporter_addr: TAddr
@@ -77,30 +77,30 @@ export interface IRevokeReporterStr extends IBaseSigStr {
 
 // Submitted by reporter:
 export interface ISubmitReportStr extends IBaseSigStr {
-  type: "bloomiq-submit_report"
+  type: 'bloomiq-submit_report'
   timestamp: TDatetime
   aggregator_addr: TAddr
   subject_addr: TAddr
-  report_sha: THash
-  // sha256 of IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan>, which concurrently to this sig message is encrypted for subject public key
+  report_sha: THash // sha256 of IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan>, which concurrently to this sig message is encrypted for subject public key
 }
 
 export interface IRevokeReportStr extends IBaseSigStr {
-  type: "bloomiq-revoke_report"
+  type: 'bloomiq-revoke_report'
   timestamp: TDatetime
   aggregator_addr: TAddr
   report_id: TUuid
-  report_sha: THash
+  report_hash: THash
   subject_addr: TAddr
 }
 export interface IListReportAsReporterStr extends IBaseSigStr {
-  type: "bloomiq-list_report-reporter"
+  type: 'bloomiq-list_report-reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
+  subject_addr?: TAddr
 }
 
 export interface IShowReportAsReporterStr extends IBaseSigStr {
-  type: "bloomiq-show_report-reporter"
+  type: 'bloomiq-show_report-reporter'
   timestamp: TDatetime
   aggregator_addr: TAddr
   report_id: TUuid
@@ -108,13 +108,14 @@ export interface IShowReportAsReporterStr extends IBaseSigStr {
 
 // Submitted by subject:
 export interface IListReportAsSubjectStr extends IBaseSigStr {
-  type: "bloomiq-list_report-subject"
+  type: 'bloomiq-list_report-subject'
   timestamp: TDatetime
   aggregator_addr: TAddr
+  reporter_addr?: TAddr
 }
 
 export interface IShowReportAsSubjectStr extends IBaseSigStr {
-  type: "bloomiq-show_report-subject"
+  type: 'bloomiq-show_report-subject'
   timestamp: TDatetime
   aggregator_addr: TAddr
   report_id: TUuid
@@ -124,7 +125,7 @@ export interface IShowReportAsSubjectStr extends IBaseSigStr {
 // ATTESTATIONS
 ////////////////////////////
 export interface IPerformAttestationStr extends IBaseSigStr {
-  type: "bloomiq-perform_attestation"
+  type: 'bloomiq-perform_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
   dt_start: TDatetime
@@ -132,27 +133,27 @@ export interface IPerformAttestationStr extends IBaseSigStr {
 }
 
 export interface IDeleteAttestationStr extends IBaseSigStr {
-  type: "bloomiq-delete_attestation"
+  type: 'bloomiq-delete_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
   attestation_id: TUuid
 }
 
 export interface IShowAttestationStr extends IBaseSigStr {
-  type: "bloomiq-show_attestation"
+  type: 'bloomiq-show_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
   attestation_id: TUuid
 }
 
 export interface IListAttestationStr extends IBaseSigStr {
-  type: "bloomiq-list_attestation"
+  type: 'bloomiq-list_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
 export interface IReportStr<AttestationType> extends IBaseSigStr {
-  type: "bloomiq-report"
+  type: 'bloomiq-report'
   timestamp: TDatetime
   aggregator_addr: TAddr
   nonce: TNonce

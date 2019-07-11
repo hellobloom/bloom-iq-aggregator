@@ -1,4 +1,4 @@
-import * as B from "@src/types/models/base"
+import * as B from '@src/types/models/base'
 export type TS = B.Serialize<T>
 
 export type T = {
@@ -14,4 +14,8 @@ export type T = {
   reporter_sig: Buffer
 
   report_hash: Buffer
+  report_encrypted: Buffer
+
+  revoke_sig: Buffer
+  revoke_plaintext: string
 }

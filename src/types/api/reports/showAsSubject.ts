@@ -9,7 +9,7 @@ export type reqBody = {
 }
 export type reqParams = {
   subject_addr: string
-  reporter_addr: string
+  report_id: string
 }
 export type reqQuery = {}
 
