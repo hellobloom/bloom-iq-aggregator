@@ -135,25 +135,25 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
-    paths: "/api/v1/:subject_addr/reporters",
+    paths: "/api/v1/subjects/:subject_addr/reporters",
     fn: list,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "get",
-    paths: "/api/v1/:subject_addr/reporters/:reporter_addr",
+    paths: "/api/v1/subjects/:subject_addr/reporters/:reporter_addr",
     fn: show,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "post",
-    paths: "/api/v1/:subject_addr/reporters",
+    paths: "/api/v1/subjects/:subject_addr/reporters",
     fn: create,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "delete",
-    paths: "/api/v1/:subject_addr/reporters/:reporter_addr",
+    paths: "/api/v1/subjects/:subject_addr/reporters/:reporter_addr",
     fn: del,
     middleware: { subjectIsActive: true, adminRequired: false }
   }

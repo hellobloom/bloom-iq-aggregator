@@ -1,57 +1,26 @@
 import * as S from "@src/types/sigs"
 import * as B from "@src/lib/sigs/base"
 
-// IAllowReportStr
-let submitReportFields: Array<keyof S.ISubmitReportStr> = [
-  "type",
-  "timestamp",
-  "aggregator_addr",
-  "subject_addr",
-  "report_sha"
-]
-let submitReportType: S.ISubmitReportStr["type"] = "bloomiq-submit_report"
-
-export const validateSubmitReport = async (
-  txt: string,
-  sig: string,
-  addr: string
-): Promise<B.TValidationResult<S.ISubmitReportStr>> => {
-  let p = B.parseSigText<S.ISubmitReportStr>(txt)
-  let errors: Array<B.TFieldErr> = B.onlyErrors([
-    ...(await B.globalSigChecks(
-      p,
-      submitReportFields,
-      submitReportType,
-      "subject_sig",
-      sig,
-      txt,
-      addr
-    )),
-    await B.checkValidAddr(p, "reporter_addr")
-  ])
-
-  return B.errorCheck<S.ISubmitReportStr>(errors, p)
-}
-
-// IListReportStr
-let listReportFields: Array<keyof S.IListReportStr> = [
+// IListReportAsSubjectStr
+let listReportAsSubjectStrFields: Array<keyof S.IListReportAsSubjectStr> = [
   "type",
   "timestamp",
   "aggregator_addr"
 ]
-let listReportType: S.IListReportStr["type"] = "bloomiq-list_report"
+let listReportAsSubjectStrType: S.IListReportAsSubjectStr["type"] =
+  "bloomiq-list_report-subject"
 
-export const validateListReport = async (
+export const validateListReportAsSubject = async (
   txt: string,
   sig: string,
   addr: string
-): Promise<B.TValidationResult<S.IListReportStr>> => {
-  let p = B.parseSigText<S.IListReportStr>(txt)
+): Promise<B.TValidationResult<S.IListReportAsSubjectStr>> => {
+  let p = B.parseSigText<S.IListReportAsSubjectStr>(txt)
   let errors: Array<B.TFieldErr> = B.onlyErrors([
     ...(await B.globalSigChecks(
       p,
-      listReportFields,
-      listReportType,
+      listReportAsSubjectStrFields,
+      listReportAsSubjectStrType,
       "subject_sig",
       sig,
       txt,
@@ -59,29 +28,30 @@ export const validateListReport = async (
     ))
   ])
 
-  return B.errorCheck<S.IListReportStr>(errors, p)
+  return B.errorCheck<S.IListReportAsSubjectStr>(errors, p)
 }
 
-// IShowReportStr
-let showReportFields: Array<keyof S.IShowReportStr> = [
+// IShowReportAsSubjectStr
+let showReportAsSubjectFields: Array<keyof S.IShowReportAsSubjectStr> = [
   "type",
   "timestamp",
   "aggregator_addr",
   "report_id"
 ]
-let showReportType: S.IShowReportStr["type"] = "bloomiq-show_report"
+let showReportAsSubjectType: S.IShowReportAsSubjectStr["type"] =
+  "bloomiq-show_report-subject"
 
-export const validateShowReport = async (
+export const validateShowReportAsSubject = async (
   txt: string,
   sig: string,
   addr: string
-): Promise<B.TValidationResult<S.IShowReportStr>> => {
-  let p = B.parseSigText<S.IShowReportStr>(txt)
+): Promise<B.TValidationResult<S.IShowReportAsSubjectStr>> => {
+  let p = B.parseSigText<S.IShowReportAsSubjectStr>(txt)
   let errors: Array<B.TFieldErr> = B.onlyErrors([
     ...(await B.globalSigChecks(
       p,
-      showReportFields,
-      showReportType,
+      showReportAsSubjectFields,
+      showReportAsSubjectType,
       "subject_sig",
       sig,
       txt,
@@ -90,7 +60,69 @@ export const validateShowReport = async (
     await B.checkValidAddr(p, "reporter_addr")
   ])
 
-  return B.errorCheck<S.IShowReportStr>(errors, p)
+  return B.errorCheck<S.IShowReportAsSubjectStr>(errors, p)
+}
+
+// IListReportAsReporterStr
+let listReportAsReporterStrFields: Array<keyof S.IListReportAsReporterStr> = [
+  "type",
+  "timestamp",
+  "aggregator_addr"
+]
+let listReportAsReporterStrType: S.IListReportAsReporterStr["type"] =
+  "bloomiq-list_report-reporter"
+
+export const validateListReportAsReporter = async (
+  txt: string,
+  sig: string,
+  addr: string
+): Promise<B.TValidationResult<S.IListReportAsReporterStr>> => {
+  let p = B.parseSigText<S.IListReportAsReporterStr>(txt)
+  let errors: Array<B.TFieldErr> = B.onlyErrors([
+    ...(await B.globalSigChecks(
+      p,
+      listReportAsReporterStrFields,
+      listReportAsReporterStrType,
+      "subject_sig",
+      sig,
+      txt,
+      addr
+    ))
+  ])
+
+  return B.errorCheck<S.IListReportAsReporterStr>(errors, p)
+}
+
+// IShowReportAsReporterStr
+let showReportAsReporterFields: Array<keyof S.IShowReportAsReporterStr> = [
+  "type",
+  "timestamp",
+  "aggregator_addr",
+  "report_id"
+]
+let showReportAsReporterType: S.IShowReportAsReporterStr["type"] =
+  "bloomiq-show_report-reporter"
+
+export const validateShowReportAsReporter = async (
+  txt: string,
+  sig: string,
+  addr: string
+): Promise<B.TValidationResult<S.IShowReportAsReporterStr>> => {
+  let p = B.parseSigText<S.IShowReportAsReporterStr>(txt)
+  let errors: Array<B.TFieldErr> = B.onlyErrors([
+    ...(await B.globalSigChecks(
+      p,
+      showReportAsReporterFields,
+      showReportAsReporterType,
+      "subject_sig",
+      sig,
+      txt,
+      addr
+    )),
+    await B.checkValidAddr(p, "reporter_addr")
+  ])
+
+  return B.errorCheck<S.IShowReportAsReporterStr>(errors, p)
 }
 
 // IRevokeReportStr
@@ -122,4 +154,36 @@ export const validateRevokeReport = async (
     await B.checkValidAddr(p, "reporter_addr")
   ])
   return B.errorCheck<S.IRevokeReportStr>(errors, p)
+}
+
+// ISubmitReportSubj
+let submitReportFields: Array<keyof S.ISubmitReportStr> = [
+  "type",
+  "timestamp",
+  "aggregator_addr",
+  "subject_addr",
+  "report_sha"
+]
+let submitReportType: S.ISubmitReportStr["type"] = "bloomiq-submit_report"
+
+export const validateSubmitReport = async (
+  txt: string,
+  sig: string,
+  addr: string
+): Promise<B.TValidationResult<S.ISubmitReportStr>> => {
+  let p = B.parseSigText<S.ISubmitReportStr>(txt)
+  let errors: Array<B.TFieldErr> = B.onlyErrors([
+    ...(await B.globalSigChecks(
+      p,
+      submitReportFields,
+      submitReportType,
+      "subject_sig",
+      sig,
+      txt,
+      addr
+    )),
+    await B.checkValidAddr(p, "reporter_addr")
+  ])
+
+  return B.errorCheck<S.ISubmitReportStr>(errors, p)
 }

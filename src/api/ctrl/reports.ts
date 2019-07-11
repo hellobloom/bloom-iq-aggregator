@@ -5,7 +5,9 @@ import { Subject, Report, ReportPermission } from "@src/models"
 import * as S from "@src/lib/sigs/report"
 import { toBuffer } from "ethereumjs-util"
 
-const list = async (req: T.list.req): Promise<T.list.res> => {
+const listAsSubject = async (
+  req: T.listAsSubject.req
+): Promise<T.listAsSubject.res> => {
   let validation = await S.validateListReport(
     req.body.list_report.plaintext,
     req.body.list_report.subject_sig,
@@ -26,7 +28,9 @@ const list = async (req: T.list.req): Promise<T.list.res> => {
   }
 }
 
-const show = async (req: T.show.req): Promise<T.show.res> => {
+const showAsSubject = async (
+  req: T.showAsSubject.req
+): Promise<T.showAsSubject.res> => {
   let validation = await S.validateShowReport(
     req.body.show_report.plaintext,
     req.body.show_report.subject_sig,
@@ -125,25 +129,37 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
 const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "get",
-    paths: "/api/v1/:subject_addr/reports",
-    fn: list,
+    paths: "/api/v1/subjects/:subject_addr/reports",
+    fn: listAsSubject,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "get",
-    paths: "/api/v1/:subject_addr/reports/:report_addr",
-    fn: show,
+    paths: "/api/v1/subjects/:subject_addr/reports/:report_addr",
+    fn: showAsSubject,
+    middleware: { subjectIsActive: true, adminRequired: false }
+  },
+  {
+    method: "get",
+    paths: "/api/v1/subjects/:subject_addr/reports",
+    fn: listAsReporter,
+    middleware: { subjectIsActive: true, adminRequired: false }
+  },
+  {
+    method: "get",
+    paths: "/api/v1/subjects/:subject_addr/reports/:report_addr",
+    fn: showAsReporter,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "post",
-    paths: "/api/v1/:subject_addr/reports",
+    paths: "/api/v1/subjects/:subject_addr/reports",
     fn: create,
     middleware: { subjectIsActive: true, adminRequired: false }
   },
   {
     method: "delete",
-    paths: "/api/v1/:subject_addr/reports/:report_addr",
+    paths: "/api/v1/subjects/:subject_addr/reports/:report_addr",
     fn: del,
     middleware: { subjectIsActive: true, adminRequired: false }
   }

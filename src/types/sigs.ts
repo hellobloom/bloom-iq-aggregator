@@ -15,7 +15,9 @@ export interface IBaseSigStr {
   timestamp: TDatetime
 }
 
+////////////////////////////
 // ASSOCIATIONS
+////////////////////////////
 export interface IAllowAssociationStr extends IBaseSigStr {
   type: "bloomiq-allow_association"
   timestamp: TDatetime
@@ -69,7 +71,10 @@ export interface IRevokeReporterStr extends IBaseSigStr {
   reporter_addr: TAddr
 }
 
-// REPORTS
+////////////////////////////
+// REPORTS - Suffixed with string indicating who's submitting the request when both subject and reporter can submit similar request
+////////////////////////////
+
 // Submitted by reporter:
 export interface ISubmitReportStr extends IBaseSigStr {
   type: "bloomiq-submit_report"
@@ -88,22 +93,36 @@ export interface IRevokeReportStr extends IBaseSigStr {
   report_sha: THash
   subject_addr: TAddr
 }
-
-// Submitted by subject:
-export interface IListReportStr extends IBaseSigStr {
-  type: "bloomiq-list_report"
+export interface IListReportAsReporterStr extends IBaseSigStr {
+  type: "bloomiq-list_report-reporter"
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
-export interface IShowReportStr extends IBaseSigStr {
-  type: "bloomiq-show_report"
+export interface IShowReportAsReporterStr extends IBaseSigStr {
+  type: "bloomiq-show_report-reporter"
   timestamp: TDatetime
   aggregator_addr: TAddr
   report_id: TUuid
 }
 
+// Submitted by subject:
+export interface IListReportAsSubjectStr extends IBaseSigStr {
+  type: "bloomiq-list_report-subject"
+  timestamp: TDatetime
+  aggregator_addr: TAddr
+}
+
+export interface IShowReportAsSubjectStr extends IBaseSigStr {
+  type: "bloomiq-show_report-subject"
+  timestamp: TDatetime
+  aggregator_addr: TAddr
+  report_id: TUuid
+}
+
+////////////////////////////
 // ATTESTATIONS
+////////////////////////////
 export interface IPerformAttestationStr extends IBaseSigStr {
   type: "bloomiq-perform_attestation"
   timestamp: TDatetime
