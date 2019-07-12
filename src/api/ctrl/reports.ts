@@ -63,7 +63,11 @@ const showAsSubject = async (req: T.showAsSubject.req): Promise<T.showAsSubject.
       json: {success: false, error: 'report_id_doesnt_match_sig'},
     }
   }
-  let report = await Report.FindById(req.params.report_id)
+  let report = await Report.FindWhere({
+    id: validation.obj!.report_id,
+    subject_addr: toBuffer(req.params.subject_addr),
+  })
+  if (!report) return {status: 404, json: {success: false, error: 'not_found'}}
   return {
     status: 200,
     json: {
@@ -88,7 +92,11 @@ const showAsReporter = async (req: T.showAsReporter.req): Promise<T.showAsReport
       json: {success: false, error: 'report_id_doesnt_match_sig'},
     }
   }
-  let report = await Report.FindById(req.params.report_id)
+  let report = await Report.FindWhere({
+    id: validation.obj!.report_id,
+    reporter_addr: toBuffer(req.params.reporter_addr),
+  })
+  if (!report) return {status: 404, json: {success: false, error: 'not_found'}}
   return {
     status: 200,
     json: {
@@ -107,27 +115,38 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
   if (!validation.success) {
     return {status: 400, json: {success: false, validation}}
   }
-  if (!canReportOnSubject(toBuffer(req.params.subject_addr), toBuffer(req.body.reporter_addr))) {
-    return {
-      status: 400,
-      json: {success: false, error: 'no_report_permission'},
-    }
-  }
-  let subject = await Subject.FindWhere({addr: toBuffer(req.params.subject_addr)})
-  if (!subject) {
-    return {status: 404, json: {success: false, error: 'subject_not_found'}}
-  }
-  let reporter = await Reporter.FindWhere({addr: toBuffer(req.body.reporter_addr)})
-  if (!reporter) {
-    return {status: 404, json: {success: false, error: 'reporter_not_found'}}
-  }
-  if (validation.obj!.subject_addr! !== req.params.subject_addr) {
+  let subjectAddr = validation.obj!.subject_addr
+
+  // Return error on signed subject_addr not matching one in URL.  Just a sanity check, it relies on the signed one for other logic.
+  if (subjectAddr !== req.params.subject_addr) {
     return {
       status: 400,
       json: {success: false, error: 'subject_addr_doesnt_match_sig'},
     }
   }
-  await Report.Create({
+
+  // Check for active permission to report on subject (implies existing Reporter)
+  if (!canReportOnSubject(toBuffer(subjectAddr), toBuffer(req.body.reporter_addr))) {
+    return {
+      status: 400,
+      json: {success: false, error: 'no_report_permission'},
+    }
+  }
+
+  // Make sure subject exists
+  let subject = await Subject.FindWhere({addr: toBuffer(subjectAddr)})
+  if (!subject) {
+    return {status: 404, json: {success: false, error: 'subject_not_found'}}
+  }
+
+  // Make sure reporter exists
+  let reporter = await Reporter.FindWhere({addr: toBuffer(req.body.reporter_addr)})
+  if (!reporter) {
+    return {status: 404, json: {success: false, error: 'reporter_not_found'}}
+  }
+
+  // Create report
+  let reportAttrs: Partial<Report.T> = {
     subject_id: subject.id,
     subject_addr: toBuffer(subject.addr),
 
@@ -135,12 +154,17 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
     reporter_addr: toBuffer(req.body.reporter_addr),
     reporter_sig: toBuffer(req.body.submit_report.reporter_sig),
 
-    report_hash: toBuffer(req.body.report_hash),
+    report_hash: toBuffer(validation.obj!.report_hash),
     report_encrypted: toBuffer(req.body.report_encrypted),
-  })
+  }
+  if (validation.obj!.tags) {
+    reportAttrs.tags = validation.obj!.tags
+  }
+  let report = await Report.Create(reportAttrs)
+
   return {
     status: 200,
-    json: {success: true},
+    json: {success: true, report_id: report.id!},
   }
 }
 
@@ -153,7 +177,8 @@ const revoke = async (req: T.revoke.req): Promise<T.revoke.res> => {
   if (!validation.success) {
     return {status: 400, json: {success: false, validation}}
   }
-  if (validation.obj!.report_id! !== req.params.report_id) {
+  let reportId = validation.obj!.report_id!
+  if (reportId !== req.params.report_id) {
     return {
       status: 400,
       json: {success: false, error: 'report_id_doesnt_match_sig'},
@@ -163,7 +188,7 @@ const revoke = async (req: T.revoke.req): Promise<T.revoke.res> => {
     return {status: 400, json: {success: false, error: 'subject_addr_doesnt_match_sig'}}
   }
   let report = await Report.FindWhere({
-    id: validation.obj!.report_id,
+    id: reportId,
     report_hash: toBuffer(validation.obj!.report_hash),
     subject_addr: toBuffer(validation.obj!.subject_addr),
     reporter_addr: toBuffer(req.body.reporter_addr),
@@ -173,7 +198,7 @@ const revoke = async (req: T.revoke.req): Promise<T.revoke.res> => {
   }
 
   await Report.Q.where({
-    id: toBuffer(req.params.report_id),
+    id: report.id,
   })
     .whereNull('revoke_sig')
     .whereNull('revoke_plaintext')

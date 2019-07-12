@@ -81,7 +81,8 @@ export interface ISubmitReportStr extends IBaseSigStr {
   timestamp: TDatetime
   aggregator_addr: TAddr
   subject_addr: TAddr
-  report_sha: THash // sha256 of IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan>, which concurrently to this sig message is encrypted for subject public key
+  report_hash: THash // sha256 of IReportStr<AD.IBaseAttUtility | AD.IBaseAttLoan>, which concurrently to this sig message is encrypted for subject public key
+  tags?: Array<string>
 }
 
 export interface IRevokeReportStr extends IBaseSigStr {

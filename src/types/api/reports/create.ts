@@ -6,7 +6,6 @@ export type reqBody = {
     plaintext: string
   }
   reporter_addr: string
-  report_hash: string
   report_encrypted: string
 }
 export type reqParams = {
@@ -16,6 +15,7 @@ export type reqQuery = {}
 
 export type respBody = {
   success: true
+  report_id: string
 }
 
 export type req = TReq<reqBody, reqParams>

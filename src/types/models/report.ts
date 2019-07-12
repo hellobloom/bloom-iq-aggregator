@@ -18,4 +18,6 @@ export type T = {
 
   revoke_sig: Buffer
   revoke_plaintext: string
+
+  tags: Array<string>
 }
