@@ -129,15 +129,15 @@ export interface IPerformAttestationStr extends IBaseSigStr {
   type: 'bloomiq-perform_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
-  dt_start: TDatetime
-  dt_end: TDatetime
+  dt_start?: TDatetime
+  dt_end?: TDatetime
+  tags?: Array<string>
 }
 
-export interface IDeleteAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-delete_attestation'
+export interface IListAttestationStr extends IBaseSigStr {
+  type: 'bloomiq-list_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
-  attestation_id: TUuid
 }
 
 export interface IShowAttestationStr extends IBaseSigStr {
@@ -147,12 +147,16 @@ export interface IShowAttestationStr extends IBaseSigStr {
   attestation_id: TUuid
 }
 
-export interface IListAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-list_attestation'
+export interface IDeleteAttestationStr extends IBaseSigStr {
+  type: 'bloomiq-delete_attestation'
   timestamp: TDatetime
   aggregator_addr: TAddr
+  attestation_id: TUuid
 }
 
+////////////////////////////
+// AUXILIARY TYPES
+////////////////////////////
 export interface IReportStr<AttestationType> extends IBaseSigStr {
   type: 'bloomiq-report'
   timestamp: TDatetime
