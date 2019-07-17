@@ -26,9 +26,15 @@ export const mkCreateMany = <M extends Record<string, any>>(m: knex.QueryBuilder
   }
 }
 
-export const mkFindById = <M extends Record<string, any>, TIDAttr extends keyof M>(m: knex.QueryBuilder, pkeyAttr: TIDAttr) => {
-  return async (pkey: M[TIDAttr]): Promise<M> => {
-    return await m.where(pkeyAttr, pkey as any).select('*')
+export const mkFindById = <M extends Record<string, any>, TIDAttr extends keyof M>(
+  m: knex.QueryBuilder,
+  pkeyAttr: TIDAttr
+) => {
+  return async (pkey: M[TIDAttr]): Promise<M | undefined> => {
+    return await m
+      .where(pkeyAttr, pkey as any)
+      .select('*')
+      .limit(1)[0]
   }
 }
 
@@ -53,7 +59,10 @@ export const mkAll = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
   }
 }
 
-export const mkDeleteOne = <M extends Record<string, any>, TIDAttr extends keyof M>(m: knex.QueryBuilder, pkeyAttr: TIDAttr) => {
+export const mkDeleteOne = <M extends Record<string, any>, TIDAttr extends keyof M>(
+  m: knex.QueryBuilder,
+  pkeyAttr: TIDAttr
+) => {
   return async (pkey: M[TIDAttr]): Promise<M> => {
     return await m.where(pkeyAttr, pkey as any).del()
   }
@@ -65,7 +74,10 @@ export const mkDeleteAll = <M extends Record<string, any>>(m: knex.QueryBuilder)
   }
 }
 
-export const mkUpdateOne = <M extends Record<string, any>, TIDAttr extends keyof M>(m: knex.QueryBuilder, pkeyAttr: TIDAttr) => {
+export const mkUpdateOne = <M extends Record<string, any>, TIDAttr extends keyof M>(
+  m: knex.QueryBuilder,
+  pkeyAttr: TIDAttr
+) => {
   return async (pkey: M[TIDAttr], updateAttrs: Partial<M>): Promise<M[]> => {
     return await m
       .where(pkeyAttr, pkey as any)
