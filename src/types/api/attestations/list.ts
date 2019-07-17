@@ -1,4 +1,5 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
+import * as ReportPermission from "@src/types/models/report_permission"
 import * as Attestation from "@src/types/models/attestation"
 
 export type reqBody = {
@@ -14,6 +15,7 @@ export type reqQuery = {}
 
 export type respBody = {
   success: true
+  report_permissions: Array<ReportPermission.TS>
   attestations: Array<Attestation.TS>
 }
 

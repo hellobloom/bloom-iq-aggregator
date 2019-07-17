@@ -1,3 +1,4 @@
 #!/bin/bash
 
-./node_modules/.bin/ts-node ./bin/console-lite.ts
+./node_modules/.bin/ts-node -O '{"module":"commonjs"}' ./bin/console-lite.ts
+

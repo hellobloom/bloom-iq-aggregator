@@ -1,14 +1,16 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
 
 export type reqBody = {
-  delete_attestation: {
+  revoke_attestation: {
     plaintext: string
     subject_sig: string
   }
 }
 export type reqParams = {
   subject_addr: string
+  attestation_id: string
 }
+
 export type reqQuery = {}
 
 export type respBody = {

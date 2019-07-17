@@ -1,6 +1,8 @@
 #!/bin/bash
 
-echo "Refreshing attestations-lib..."
+echo "Uninstalling attestations-lib..."
+npm uninstall --save "@bloomprotocol/attestations-lib"
 
+echo "Installing attestations-lib..."
 rm -rf ./node_modules/@bloomprotocol/attestations-lib
 npm install --save "@bloomprotocol/attestations-lib"

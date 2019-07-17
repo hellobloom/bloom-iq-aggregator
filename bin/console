@@ -1,4 +1,4 @@
 #!/bin/bash
 
-./node_modules/.bin/ts-node -r tsconfig-paths/register ./bin/console.ts
+./node_modules/.bin/ts-node -O '{"module":"commonjs"}' -r tsconfig-paths/register ./bin/console.ts
 

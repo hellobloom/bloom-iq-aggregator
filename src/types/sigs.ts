@@ -131,6 +131,7 @@ export interface IPerformAttestationStr extends IBaseSigStr {
   aggregator_addr: TAddr
   dt_start?: TDatetime
   dt_end?: TDatetime
+  reporter_addr?: TAddr
   tags?: Array<string>
 }
 
