@@ -5,7 +5,7 @@ import {
 
 export const subjectIsActive = async (subject_addr: Buffer) => {
   return (
-    (await Association.Q.where({
+    (await Association.Q().where({
       subject_addr
     })
       .whereNull("revoke_sig")
@@ -19,7 +19,7 @@ export const canReportOnSubject = async (
   subject_addr: Buffer
 ) => {
   return
-  ;(await ReportPermission.Q.where({
+  ;(await ReportPermission.Q().where({
     subject_addr,
     reporter_addr
   })

@@ -15,7 +15,7 @@ const listAsSubject = async (req: T.listAsSubject.req): Promise<T.listAsSubject.
   if (!validation.success) {
     return {status: 400, json: {success: false, validation}}
   }
-  let reports = await Report.Q.where({
+  let reports = await Report.Q().where({
     subject_addr: req.params.subject_addr,
   })
   return {
@@ -36,7 +36,7 @@ const listAsReporter = async (req: T.listAsReporter.req): Promise<T.listAsReport
   if (!validation.success) {
     return {status: 400, json: {success: false, validation}}
   }
-  let reports = await Report.Q.where({
+  let reports = await Report.Q().where({
     reporter_addr: req.params.reporter_addr,
   })
   return {
@@ -197,7 +197,7 @@ const revoke = async (req: T.revoke.req): Promise<T.revoke.res> => {
     return {status: 404, json: {success: false, error: 'not_found'}}
   }
 
-  await Report.Q.where({
+  await Report.Q().where({
     id: report.id,
   })
     .whereNull('revoke_sig')

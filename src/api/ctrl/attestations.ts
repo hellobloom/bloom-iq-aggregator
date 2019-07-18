@@ -17,7 +17,7 @@ const list = async (req: T.list.req): Promise<T.list.res> => {
   let report_permissions = await ReportPermission.Where({
     subject_addr: toBuffer(req.params.subject_addr)
   })
-  let reporters = await Reporter.Q.whereIn(
+  let reporters = await Reporter.Q().whereIn(
     "id",
     report_permissions.map(x => x.reporter_id)
   )
@@ -118,7 +118,7 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
       json: { success: false, error: "reporter_addr_doesnt_match_sig" }
     }
   }
-  await ReportPermission.Q.where({
+  await ReportPermission.Q().where({
     subject_addr: toBuffer(req.params.subject_addr),
     reporter_addr: toBuffer(req.params.reporter_addr)
   })

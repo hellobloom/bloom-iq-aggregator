@@ -8,6 +8,13 @@ export interface TAttMetaReport extends AD.IBaseAttMeta {
 let context = 'https://github.com/hellobloom/attestations-lib/blob/master/src/AttestationData.ts'
 
 export const generateAttestation = async (performArgs: S.IPerformAttestationStr): Promise<TAttMetaReport> => {
+  let reports = Report.Q().Where({})
+
+  if (performArgs.dt_start) {
+  }
+
+  reports = await reports
+
   return {
     '@context': context,
     generality: 1,

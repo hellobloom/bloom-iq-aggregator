@@ -35,7 +35,7 @@ console.log()
 /**
  * Inject helpers into REPL context
  */
-const utils = projectRequire('./scripts/utils')
+const utils = projectRequire('./src/lib/util')
 
 const helpers = {
   utils: {

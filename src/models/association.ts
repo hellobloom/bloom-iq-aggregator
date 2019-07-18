@@ -21,7 +21,7 @@ export const serialize = (a: T): TS => {
 export type TID = Pick<T, "id">["id"]
 export type TAttr = keyof T
 
-export const Q = B.db("associations")
+export const Q = () => B.db("associations")
 
 export const Create = B.mkCreate<T>(Q)
 export const FindById = B.mkFindById<T, "id">(Q, "id")
