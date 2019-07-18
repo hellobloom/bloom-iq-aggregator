@@ -132,7 +132,8 @@ export interface IPerformAttestationStr extends IBaseSigStr {
   dt_start?: TDatetime
   dt_end?: TDatetime
   reporter_addr?: TAddr
-  tags?: Array<string>
+  tags_some?: Array<string> // Reports must match at least one of the specified tags
+  tags_all?: Array<string> // Reports must match all of the specified tags
 }
 
 export interface IListAttestationStr extends IBaseSigStr {

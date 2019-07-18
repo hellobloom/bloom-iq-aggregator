@@ -14,80 +14,92 @@ export const db = knex(knexConfig)
 // Basic model methods
 ////////////////////////////////////////////////////
 
-export const mkCreate = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkCreate = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (attrs: Partial<M>): Promise<M> => {
-    return await m.insert(attrs).returning('*')
+    return await m()
+      .insert(attrs)
+      .returning('*')
   }
 }
 
-export const mkCreateMany = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkCreateMany = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (attrs: Partial<M>[]): Promise<M[]> => {
-    return await m.insert(attrs).returning('*')
+    return await m()
+      .insert(attrs)
+      .returning('*')
   }
 }
 
 export const mkFindById = <M extends Record<string, any>, TIDAttr extends keyof M>(
-  m: knex.QueryBuilder,
+  m: () => knex.QueryBuilder,
   pkeyAttr: TIDAttr
 ) => {
   return async (pkey: M[TIDAttr]): Promise<M | undefined> => {
-    return await m
+    return await m()
       .where(pkeyAttr, pkey as any)
       .select('*')
       .limit(1)[0]
   }
 }
 
-export const mkFindWhere = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkFindWhere = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (whereAttrs: Partial<M>): Promise<M> => {
-    return await m
+    return await m()
       .where(whereAttrs as any)
       .select('*')
       .limit(1)[0]
   }
 }
 
-export const mkWhere = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkWhere = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (whereAttrs: Partial<M>): Promise<M[]> => {
-    return await m.where(whereAttrs as any).select('*')
+    return await m()
+      .where(whereAttrs as any)
+      .select('*')
   }
 }
 
-export const mkAll = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkAll = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (): Promise<M[]> => {
-    return await m.select('*')
+    return await m().select('*')
   }
 }
 
 export const mkDeleteOne = <M extends Record<string, any>, TIDAttr extends keyof M>(
-  m: knex.QueryBuilder,
+  m: () => knex.QueryBuilder,
   pkeyAttr: TIDAttr
 ) => {
   return async (pkey: M[TIDAttr]): Promise<M> => {
-    return await m.where(pkeyAttr, pkey as any).del()
+    return await m()
+      .where(pkeyAttr, pkey as any)
+      .del()
   }
 }
 
-export const mkDeleteAll = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkDeleteAll = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (whereAttrs: Partial<M>): Promise<M> => {
-    return await m.where(whereAttrs as any).del()
+    return await m()
+      .where(whereAttrs as any)
+      .del()
   }
 }
 
 export const mkUpdateOne = <M extends Record<string, any>, TIDAttr extends keyof M>(
-  m: knex.QueryBuilder,
+  m: () => knex.QueryBuilder,
   pkeyAttr: TIDAttr
 ) => {
   return async (pkey: M[TIDAttr], updateAttrs: Partial<M>): Promise<M[]> => {
-    return await m
+    return await m()
       .where(pkeyAttr, pkey as any)
       .update(updateAttrs)
       .returning('*')
   }
 }
 
-export const mkUpdateAll = <M extends Record<string, any>>(m: knex.QueryBuilder) => {
+export const mkUpdateAll = <M extends Record<string, any>>(m: () => knex.QueryBuilder) => {
   return async (whereAttrs: Partial<M>, updateAttrs: Partial<M>): Promise<void> => {
-    return await m.where(whereAttrs as any).update(updateAttrs)
+    return await m()
+      .where(whereAttrs as any)
+      .update(updateAttrs)
   }
 }
