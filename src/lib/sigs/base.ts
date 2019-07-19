@@ -1,8 +1,8 @@
-import * as EthU from "ethereumjs-util"
-import * as D from "date-fns"
-import * as wallet from "ethereumjs-wallet"
+import * as EthU from 'ethereumjs-util'
+import * as D from 'date-fns'
+import * as wallet from 'ethereumjs-wallet'
 // import * as S from "@src/types/sigs"
-import { envPr } from "@src/environment"
+import {envPr} from '@src/environment'
 
 export type TSuccess<TSigType = undefined> = {
   success: true
@@ -36,41 +36,24 @@ export const isValidSignatureString = (signatureString: string): boolean => {
   } catch {
     return false
   }
-  const { v, r, s } = signature
+  const {v, r, s} = signature
   return EthU.isValidSignature(v, r, s, true)
 }
 
-export const signatureMatches = (
-  rpcSig: string,
-  plaintext: string,
-  ethAddress: string
-) => {
-  const recoveredSigner: Buffer = recoverEthAddressFromPersonalRpcSig(
-    plaintext,
-    rpcSig
-  )
+export const signatureMatches = (rpcSig: string, plaintext: string, ethAddress: string) => {
+  const recoveredSigner: Buffer = recoverEthAddressFromPersonalRpcSig(plaintext, rpcSig)
   return recoveredSigner.equals(EthU.toBuffer(ethAddress))
 }
 
-export const recoverEthAddressFromDigest = (
-  digest: Buffer,
-  rpcSig: string
-): Buffer => {
+export const recoverEthAddressFromDigest = (digest: Buffer, rpcSig: string): Buffer => {
   // Extract the signature parts so we can recover the public key
   const sigParts = EthU.fromRpcSig(rpcSig)
   // Recover public key from the hash of the message we constructed and the signature the user provided
-  const recoveredPubkey = EthU.ecrecover(
-    digest,
-    sigParts.v,
-    sigParts.r,
-    sigParts.s
-  )
+  const recoveredPubkey = EthU.ecrecover(digest, sigParts.v, sigParts.r, sigParts.s)
   // Convert the recovered public key into the corresponding ethereum address
-  const recoveredAddress = wallet
-    .fromPublicKey(new Buffer(recoveredPubkey, "hex"))
-    .getAddressString()
+  const recoveredAddress = wallet.fromPublicKey(new Buffer(recoveredPubkey, 'hex')).getAddressString()
 
-  return new Buffer(EthU.stripHexPrefix(recoveredAddress), "hex")
+  return new Buffer(EthU.stripHexPrefix(recoveredAddress), 'hex')
 }
 
 /**
@@ -98,10 +81,7 @@ export const recoverEthAddressFromDigest = (
  * @param rpcSig a user provided RPC signature string (like "0x123456") produced from the `signedText`
  * @return The ETH address used to sign the text
  */
-export const recoverEthAddressFromPersonalRpcSig = (
-  text: string,
-  rpcSig: string
-): Buffer => {
+export const recoverEthAddressFromPersonalRpcSig = (text: string, rpcSig: string): Buffer => {
   // Hash the text the same way web3 does with the weird "Ethereum Signed Message" text
   const hashed = EthU.hashPersonalMessage(EthU.toBuffer(text))
 
@@ -109,28 +89,21 @@ export const recoverEthAddressFromPersonalRpcSig = (
 }
 
 // Validation functions
-export const fieldErr = (
-  field: string,
-  err: string,
-  details?: any
-): TFieldErr => {
+export const fieldErr = (field: string, err: string, details?: any): TFieldErr => {
   return {
     success: false,
     field,
     err,
-    details
+    details,
   }
 }
 
-export const success: TSuccess = { success: true }
+export const success: TSuccess = {success: true}
 
-export const checkFieldsPresent = async (
-  obj: any,
-  keys: Array<string>
-): Promise<Array<TFieldResult>> => {
+export const checkFieldsPresent = async (obj: any, keys: Array<string>): Promise<Array<TFieldResult>> => {
   return keys.map((f: string) => {
     if (!(f in obj)) {
-      return fieldErr(f, "field_missing")
+      return fieldErr(f, 'field_missing')
     } else {
       return success
     }
@@ -143,10 +116,10 @@ export const checkTimestamp = async (obj: any): Promise<TFieldResult> => {
   let threshold = D.subSeconds(now, e.sig_max_seconds_ago)
   let comparison = D.compareAsc(threshold, D.parse(obj.timestamp))
   if (comparison === 1) {
-    return fieldErr("timestamp", "too_old", {
+    return fieldErr('timestamp', 'too_old', {
       timestamp: obj.timestamp,
       max_seconds_ago: e.sig_max_seconds_ago,
-      threshold
+      threshold,
     })
   }
   return success
@@ -154,77 +127,64 @@ export const checkTimestamp = async (obj: any): Promise<TFieldResult> => {
 
 export const checkAggregatorAddr = async (obj: any): Promise<TFieldResult> => {
   let e = await envPr
-  if (e.aggregator_addresses.indexOf(obj.aggregator_addr) === -1) {
-    return fieldErr("aggregator_addr", "unlisted", {
+  if (e.attestations.attester_address !== obj.aggregator_addr) {
+    return fieldErr('aggregator_addr', 'unlisted', {
       specified: obj.aggregator_addr,
-      listed: e.aggregator_addresses
+      listed: e.attestations.attester_address,
     })
   }
   return success
 }
 
-export const checkType = async (
-  obj: any,
-  sigType: string
-): Promise<TFieldResult> => {
+export const checkType = async (obj: any, sigType: string): Promise<TFieldResult> => {
   if (obj.type !== sigType) {
-    return fieldErr("type", "invalid", {
+    return fieldErr('type', 'invalid', {
       specified: obj.Type,
-      required: obj.type
+      required: obj.type,
     })
   }
   return success
 }
 
-export const checkValidAddr = async (
-  obj: any,
-  field: string
-): Promise<TFieldResult> => {
+export const checkValidAddr = async (obj: any, field: string): Promise<TFieldResult> => {
   let addr = obj[field]
-  if (typeof addr === "undefined") {
-    return fieldErr(field, "not_specified")
+  if (typeof addr === 'undefined') {
+    return fieldErr(field, 'not_specified')
   }
-  if (typeof addr !== "string") {
-    return fieldErr(field, "not_string")
+  if (typeof addr !== 'string') {
+    return fieldErr(field, 'not_string')
   }
   if (addr.length !== 42) {
-    return fieldErr(field, "invalid_length")
+    return fieldErr(field, 'invalid_length')
   }
   return success
 }
 
-export const checkValidSig = async (
-  sig: any,
-  field: any,
-  text: string,
-  addr: string
-): Promise<TFieldResult> => {
+export const checkValidSig = async (sig: any, field: any, text: string, addr: string): Promise<TFieldResult> => {
   if (!isValidSignatureString(sig)) {
-    return fieldErr(field, "invalid_sig_format")
+    return fieldErr(field, 'invalid_sig_format')
   }
   let resultAddr = recoverEthAddressFromPersonalRpcSig(text, sig)
   let addrBuffer = EthU.toBuffer(addr)
   if (resultAddr !== addrBuffer) {
-    return fieldErr(field, "invalid_sig", {
+    return fieldErr(field, 'invalid_sig', {
       text,
       sig,
       expectedAddr: addr,
-      resultAddr
+      resultAddr,
     })
   }
   return success
 }
 
-export const onlyErrors = (
-  results: Array<TFieldErr | TSuccess>
-): Array<TFieldErr> => {
+export const onlyErrors = (results: Array<TFieldErr | TSuccess>): Array<TFieldErr> => {
   return results.filter((x): x is TFieldErr => x.success === false)
 }
 
 export const globalSigChecks = async <T extends any>(
   sigObj: T,
   fields: Array<keyof T>,
-  sigType: T["type"],
+  sigType: T['type'],
   sigField: string,
   sig: string,
   txt: string,
@@ -235,25 +195,20 @@ export const globalSigChecks = async <T extends any>(
     await checkAggregatorAddr(sigObj),
     await checkTimestamp(sigObj),
     await checkType(sigObj, sigType),
-    await checkValidSig(sig, sigField, txt, addr)
+    await checkValidSig(sig, sigField, txt, addr),
   ]
 }
 
-export const errorCheck = <TSigType>(
-  errors: Array<TFieldErr>,
-  sigObj: TSigType
-): TValidationResult<TSigType> => {
+export const errorCheck = <TSigType>(errors: Array<TFieldErr>, sigObj: TSigType): TValidationResult<TSigType> => {
   if (errors.length === 0) {
-    let resp = { success: true, obj: sigObj } as TSuccess<TSigType>
+    let resp = {success: true, obj: sigObj} as TSuccess<TSigType>
     return resp
   } else {
-    return { success: false, errors }
+    return {success: false, errors}
   }
 }
 
-export const validationSucceeded = (
-  validation: Array<TFieldErr> | TSuccess
-) => {
+export const validationSucceeded = (validation: Array<TFieldErr> | TSuccess) => {
   return !(validation instanceof Array)
 }
 

@@ -134,6 +134,8 @@ export interface IPerformAttestationStr extends IBaseSigStr {
   reporter_addr?: TAddr
   tags_some?: Array<string> // Reports must match at least one of the specified tags
   tags_all?: Array<string> // Reports must match all of the specified tags
+  addr_whitelist?: Array<TAddr>
+  addr_blacklist?: Array<TAddr>
 }
 
 export interface IListAttestationStr extends IBaseSigStr {

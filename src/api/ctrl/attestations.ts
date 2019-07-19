@@ -103,6 +103,15 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
   }
 }
 
+const sign = async (req: T.sign.req): Promise<T.sign.res) => {
+  let subject = await Subject.FindWhere({
+    addr: toBuffer(req.params.subject_addr)
+  })
+  let attestation = await Attestation.FindWhere({
+    subject_addr: toBuffer(req.params.subject_addr)
+  })
+})
+
 const del = async (req: T.del.req): Promise<T.del.res> => {
   let validation = await S.validateRevokeReporter(
     req.body.revoke_reporter.plaintext,
