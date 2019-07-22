@@ -1,8 +1,10 @@
+import * as R from 'ramda'
 import * as S from '@src/types/sigs'
-import {Report as R, Attestation as A} from '@src/models'
+import {Report as Re, Attestation as A} from '@src/models'
 import {AttestationData as AD, HashingLogic as HL} from '@bloomprotocol/attestations-lib'
 import {envPr} from '@src/environment'
 import {bufferToHex, toBuffer} from 'ethereumjs-util'
+import axios from 'axios'
 import * as dtf from 'date-fns'
 
 export interface TAttMetaReport extends AD.IBaseAttMeta {
@@ -16,7 +18,7 @@ export const generateAttestationStr = async (
   subjectAddr: Buffer,
   performArgs: S.IPerformAttestationStr
 ): Promise<TAttMetaReport> => {
-  var reports = R.Q().where({
+  var reports = Re.Q().where({
     subject_addr: subjectAddr,
   })
 
@@ -87,4 +89,40 @@ export const generateAttestationData = async (
     subject: bufferToHex(subjectAddr),
     criteria: performArgs,
   }
+}
+
+export const submit = async (batchl2hash: string) => {
+  const e = await envPr
+
+  const headers = e.attestations.service.default_headers
+  const specs = e.attestations.service.submit
+
+  const body = R.assocPath(specs.interpolations['batchl2hash'], batchl2hash, {})
+
+  const resp = await axios({
+    url: specs.url,
+    method: specs.method,
+    headers: {...headers, ...specs.headers},
+    body: body,
+  } as any)
+
+  return resp.data
+}
+
+export const get_proof = async (batchl2hash: string) => {
+  const e = await envPr
+
+  const headers = e.attestations.service.default_headers
+  const specs = e.attestations.service.get_proof
+
+  const body = R.assocPath(specs.interpolations['batchl2hash'], batchl2hash, {})
+
+  const resp = await axios({
+    url: specs.url,
+    method: specs.method,
+    headers: {...headers, ...specs.headers},
+    body: body,
+  } as any)
+
+  return resp.data
 }

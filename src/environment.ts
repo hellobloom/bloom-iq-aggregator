@@ -11,6 +11,17 @@ export type TWebhookOut = {
   key: string // outgoing key
 }
 
+export type TFlexEndpoint = {
+  url: string
+  interpolations: {
+    [k: string]: Array<string>
+  }
+  method: 'get' | 'post' | 'patch' | 'put' | 'delete'
+  headers: {
+    [k: string]: string
+  }
+}
+
 export const env = async () => {
   let p = process.env
   return {
@@ -25,6 +36,11 @@ export const env = async () => {
       attester_private_key: envVar(p, 'ATTESTATION_PRIVKEY', 'string'),
       attester_address: envVar(p, 'ATTESTATION_ADDR', 'string'),
       contract_address: envVar(p, 'ATTESTATION_CONTRACT_ADDR', 'string'),
+      service: {
+        default_headers: envVar(p, 'ATTESTATION_SUBMISSION_HEADERS', 'json'),
+        submit: envVar(p, 'ATTESTATION_SUBMISSION_SUBMIT', 'json') as TFlexEndpoint,
+        get_proof: envVar(p, 'ATTESTATION_SUBMISSION_GET_PROOF', 'json') as TFlexEndpoint,
+      },
     },
   }
 }

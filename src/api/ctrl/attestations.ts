@@ -1,7 +1,7 @@
 // import { renderError } from "@src/api/renderError"
 import {TApiRoutes} from '@src/types/api/basetypes'
 import * as T from '@src/types/api/attestations'
-import {Subject, Attestation} from '@src/models'
+import {Subject, Attestation as A} from '@src/models'
 import * as S from '@src/lib/sigs/attestation'
 import * as G from '@src/lib/attestations'
 import {envPr} from '@src/environment'
@@ -22,14 +22,14 @@ const list = async (req: T.list.req): Promise<T.list.res> => {
     addr: toBuffer(req.params.subject_addr),
   })
   if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
-  const attestations = await Attestation.Where({
+  const attestations = await A.Where({
     subject_id: subject.id,
   })
   return {
     status: 200,
     json: {
       success: true,
-      attestations: attestations.map(Attestation.serialize),
+      attestations: attestations.map(A.serialize),
     },
   }
 }
@@ -49,14 +49,14 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
       json: {success: false, error: 'attestation_id_doesnt_match_sig'},
     }
   }
-  const attestation = await Attestation.FindWhere({
+  const attestation = await A.FindWhere({
     id: req.params.attestation_id,
   })
   return {
     status: 200,
     json: {
       success: true,
-      attestation: Attestation.serialize(attestation),
+      attestation: A.serialize(attestation),
     },
   }
 }
@@ -78,7 +78,7 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
 
   const e = await envPr
 
-  const attestation = await Attestation.Create({
+  const attestation = await A.Create({
     subject_id: subject.id,
     subject_addr: toBuffer(req.params.subject_addr),
     aggregator_addr: e.attestations.attester_address,
@@ -90,7 +90,7 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
     status: 200,
     json: {
       success: true,
-      attestation: Attestation.serialize(attestation),
+      attestation: A.serialize(attestation),
     },
   }
 }
@@ -103,7 +103,7 @@ const sign = async (req: T.sign.req): Promise<T.sign.res> => {
   })
   if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
 
-  const attestation = await Attestation.FindWhere({
+  const attestation = await A.FindWhere({
     subject_addr: toBuffer(req.params.subject_addr),
   })
   if (!attestation) return {status: 400, json: {success: false, error: 'no_attestation'}}
@@ -117,6 +117,10 @@ const sign = async (req: T.sign.req): Promise<T.sign.res> => {
   )
 
   if (success) {
+    attestation.data.subjectSig = req.body.sign_attestation.subject_sig
+    await A.UpdateOne(attestation.id, {
+      data: attestation.data,
+    })
     return {
       status: 200,
       json: {success: true},
@@ -144,7 +148,7 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
       json: {success: false, error: 'attestation_id_doesnt_match_sig'},
     }
   }
-  await Attestation.Q()
+  await A.Q()
     .where({
       subject_addr: toBuffer(req.params.subject_addr),
       attestation_id: toBuffer(req.params.attestation_id),
