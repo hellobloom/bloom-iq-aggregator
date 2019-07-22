@@ -7,8 +7,9 @@ export type T = {
   id?: string // uuid
   created: string
   updated: string
-  user_id: string
-  aggregator_id: string
+  subject_id: string
+  subject_addr: Buffer
+  aggregator_addr: Buffer
   type: string
   types: string[]
   data: HL.IBloomBatchMerkleTreeComponents | IUnsignedBloomBatchMerkleTreeComponents

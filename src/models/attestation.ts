@@ -5,6 +5,7 @@ import {
   TUnsignedAttData as _TUnsignedAttData,
   TSignedAttData as _TSignedAttData,
 } from '@src/types/models/attestation'
+import {bufferToHex} from 'ethereumjs-util'
 
 export type T = _T
 export type TS = _TS
@@ -14,7 +15,7 @@ export type TSignedAttData = _TSignedAttData
 // Serializer
 
 export const serialize = (a: T): TS => {
-  return a
+  return {...a, subject_addr: bufferToHex(a.subject_addr), aggregator_addr: bufferToHex(a.aggregator_addr)}
 }
 
 export type TID = Pick<T, 'id'>['id']

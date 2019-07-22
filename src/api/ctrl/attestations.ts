@@ -1,171 +1,166 @@
 // import { renderError } from "@src/api/renderError"
-import { TApiRoutes } from "@src/types/api/basetypes"
-import * as T from "@src/types/api/reporters"
-import { Subject, Reporter, ReportPermission } from "@src/models"
-import * as S from "@src/lib/sigs/reporter"
-import { toBuffer } from "ethereumjs-util"
+import {TApiRoutes} from '@src/types/api/basetypes'
+import * as T from '@src/types/api/attestations'
+import {Subject, Attestation} from '@src/models'
+import * as S from '@src/lib/sigs/attestation'
+import * as G from '@src/lib/attestations'
+import {envPr} from '@src/environment'
+import {toBuffer} from 'ethereumjs-util'
 
 const list = async (req: T.list.req): Promise<T.list.res> => {
-  let validation = await S.validateListReporter(
-    req.body.list_reporter.plaintext,
-    req.body.list_reporter.subject_sig,
+  let validation = await S.validateListAttestation(
+    req.body.list_attestation.plaintext,
+    req.body.list_attestation.subject_sig,
     req.params.subject_addr
   )
   if (!validation.success) {
-    return { status: 400, json: { success: false, validation } }
+    return {status: 400, json: {success: false, validation}}
   }
-  let report_permissions = await ReportPermission.Where({
-    subject_addr: toBuffer(req.params.subject_addr)
+
+  let subject = await Subject.FindWhere({
+    addr: toBuffer(req.params.subject_addr),
   })
-  let reporters = await Reporter.Q().whereIn(
-    "id",
-    report_permissions.map(x => x.reporter_id)
-  )
+  if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
+  let attestations = await Attestation.Where({
+    subject_id: subject.id,
+  })
   return {
     status: 200,
     json: {
       success: true,
-      reporters: reporters.map(Reporter.serialize),
-      report_permissions: report_permissions.map(ReportPermission.serialize)
-    }
+      attestations: attestations.map(Attestation.serialize),
+    },
   }
 }
 
 const show = async (req: T.show.req): Promise<T.show.res> => {
-  let validation = await S.validateShowReporter(
-    req.body.show_reporter.plaintext,
-    req.body.show_reporter.subject_sig,
+  let validation = await S.validateShowAttestation(
+    req.body.show_attestation.plaintext,
+    req.body.show_attestation.subject_sig,
     req.params.subject_addr
   )
   if (!validation.success) {
-    return { status: 400, json: { success: false, validation } }
+    return {status: 400, json: {success: false, validation}}
   }
-  if (validation.obj!.reporter_addr! !== req.params.reporter_addr) {
+  if (validation.obj!.attestation_id! !== req.params.attestation_id) {
     return {
       status: 400,
-      json: { success: false, error: "reporter_addr_doesnt_match_sig" }
+      json: {success: false, error: 'attestation_id_doesnt_match_sig'},
     }
   }
-  let reporter = await Reporter.FindWhere({
-    addr: toBuffer(req.params.reporter_addr)
-  })
-  let report_permissions = await ReportPermission.Where({
-    reporter_addr: toBuffer(req.params.reporter_addr),
-    subject_addr: toBuffer(req.params.subject_addr)
+  let attestation = await Attestation.FindWhere({
+    id: req.params.attestation_id,
   })
   return {
     status: 200,
     json: {
       success: true,
-      reporter: Reporter.serialize(reporter),
-      report_permissions: report_permissions.map(ReportPermission.serialize)
-    }
+      attestation: Attestation.serialize(attestation),
+    },
   }
 }
 
 const create = async (req: T.create.req): Promise<T.create.res> => {
   let subject = await Subject.FindWhere({
-    addr: toBuffer(req.params.subject_addr)
+    addr: toBuffer(req.params.subject_addr),
   })
-  let validation = await S.validateAllowReporter(
-    req.body.allow_reporter.plaintext,
-    req.body.allow_reporter.subject_sig,
+  let validation = await S.validatePerformAttestation(
+    req.body.perform_attestation.plaintext,
+    req.body.perform_attestation.subject_sig,
     req.params.subject_addr
   )
   if (!validation.success) {
-    return { status: 400, json: { success: false, validation } }
+    return {status: 400, json: {success: false, validation}}
   }
-  if (validation.obj!.reporter_addr! !== req.params.reporter_addr) {
-    return {
-      status: 400,
-      json: { success: false, error: "reporter_addr_doesnt_match_sig" }
-    }
-  }
-  let reporter = await Reporter.FindWhere({
-    addr: toBuffer(req.params.reporter_addr)
-  })
-  if (!reporter) {
-    reporter = await Reporter.Create({
-      addr: toBuffer(req.params.reporter_addr)
-    })
-  }
-  await ReportPermission.Create({
+
+  let data = await G.generateAttestationData(toBuffer(req.params.subject_addr), validation.obj!)
+
+  let e = await envPr
+
+  await Attestation.Create({
     subject_id: subject.id,
     subject_addr: toBuffer(req.params.subject_addr),
-    reporter_id: reporter.id,
-    reporter_addr: toBuffer(req.params.reporter_addr),
-    permit_sig: toBuffer(req.body.allow_reporter.subject_sig),
-    permit_plaintext: req.body.allow_reporter.plaintext
+    aggregator_addr: e.attestations.attester_address,
+    type: 'meta',
+    types: ['meta'],
+    data: data,
   })
   return {
     status: 200,
-    json: { success: true }
+    json: {success: true},
   }
 }
 
-const sign = async (req: T.sign.req): Promise<T.sign.res) => {
+const sign = async (req: T.sign.req): Promise<T.sign.res> => {
   let subject = await Subject.FindWhere({
-    addr: toBuffer(req.params.subject_addr)
+    addr: toBuffer(req.params.subject_addr),
   })
   let attestation = await Attestation.FindWhere({
-    subject_addr: toBuffer(req.params.subject_addr)
+    subject_addr: toBuffer(req.params.subject_addr),
   })
-})
+}
 
 const del = async (req: T.del.req): Promise<T.del.res> => {
-  let validation = await S.validateRevokeReporter(
-    req.body.revoke_reporter.plaintext,
-    req.body.revoke_reporter.subject_sig,
+  let validation = await S.validateRevokeAttestation(
+    req.body.revoke_attestation.plaintext,
+    req.body.revoke_attestation.subject_sig,
     req.params.subject_addr
   )
   if (!validation.success) {
-    return { status: 400, json: { success: false, validation } }
+    return {status: 400, json: {success: false, validation}}
   }
-  if (validation.obj!.reporter_addr! !== req.params.reporter_addr) {
+  if (validation.obj!.attestation_id! !== req.params.attestation_id) {
     return {
       status: 400,
-      json: { success: false, error: "reporter_addr_doesnt_match_sig" }
+      json: {success: false, error: 'attestation_id_doesnt_match_sig'},
     }
   }
-  await ReportPermission.Q().where({
-    subject_addr: toBuffer(req.params.subject_addr),
-    reporter_addr: toBuffer(req.params.reporter_addr)
-  })
-    .whereNull("revoke_sig")
-    .whereNull("revoke_plaintext")
+  await Attestation.Q()
+    .where({
+      subject_addr: toBuffer(req.params.subject_addr),
+      attestation_id: toBuffer(req.params.attestation_id),
+    })
+    .whereNull('revoke_sig')
+    .whereNull('revoke_plaintext')
     .update({
-      revoke_sig: toBuffer(req.body.revoke_reporter.subject_sig),
-      revoke_plaintext: req.body.revoke_reporter.plaintext
+      revoke_sig: toBuffer(req.body.revoke_attestation.subject_sig),
+      revoke_plaintext: req.body.revoke_attestation.plaintext,
     })
 
-  return { status: 200, json: { success: true } }
+  return {status: 200, json: {success: true}}
 }
 
 const routes: Array<TApiRoutes<any, any>> = [
   {
-    method: "get",
-    paths: "/api/v1/subjects/:subject_addr/reporters",
+    method: 'get',
+    paths: '/api/v1/subjects/:subject_addr/attestations',
     fn: list,
-    middleware: { subjectIsActive: true, adminRequired: false }
+    middleware: {subjectIsActive: true, adminRequired: false},
   },
   {
-    method: "get",
-    paths: "/api/v1/subjects/:subject_addr/reporters/:reporter_addr",
+    method: 'get',
+    paths: '/api/v1/subjects/:subject_addr/attestations/:attestation_id',
     fn: show,
-    middleware: { subjectIsActive: true, adminRequired: false }
+    middleware: {subjectIsActive: true, adminRequired: false},
   },
   {
-    method: "post",
-    paths: "/api/v1/subjects/:subject_addr/reporters",
+    method: 'post',
+    paths: '/api/v1/subjects/:subject_addr/attestations',
     fn: create,
-    middleware: { subjectIsActive: true, adminRequired: false }
+    middleware: {subjectIsActive: true, adminRequired: false},
   },
   {
-    method: "delete",
-    paths: "/api/v1/subjects/:subject_addr/reporters/:reporter_addr",
+    method: 'post',
+    paths: '/api/v1/subjects/:subject_addr/attestations/:attestation_id/sign',
+    fn: sign,
+    middleware: {subjectIsActive: true, adminRequired: false},
+  },
+  {
+    method: 'delete',
+    paths: '/api/v1/subjects/:subject_addr/attestations/:attestation_id',
     fn: del,
-    middleware: { subjectIsActive: true, adminRequired: false }
-  }
+    middleware: {subjectIsActive: true, adminRequired: false},
+  },
 ]
 
 export default routes

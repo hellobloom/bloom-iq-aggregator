@@ -1,7 +1,7 @@
-import { TRespE, TReq } from "@src/types/api/basetypes"
+import {TRespE, TReq} from '@src/types/api/basetypes'
 
 export type reqBody = {
-  allow_attestation: {
+  perform_attestation: {
     subject_sig: string
     plaintext: string
   }
