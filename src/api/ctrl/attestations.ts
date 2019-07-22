@@ -5,10 +5,11 @@ import {Subject, Attestation} from '@src/models'
 import * as S from '@src/lib/sigs/attestation'
 import * as G from '@src/lib/attestations'
 import {envPr} from '@src/environment'
-import {toBuffer} from 'ethereumjs-util'
+import {toBuffer, bufferToHex} from 'ethereumjs-util'
+import {HashingLogic as HL} from '@bloomprotocol/attestations-lib'
 
 const list = async (req: T.list.req): Promise<T.list.res> => {
-  let validation = await S.validateListAttestation(
+  const validation = await S.validateListAttestation(
     req.body.list_attestation.plaintext,
     req.body.list_attestation.subject_sig,
     req.params.subject_addr
@@ -17,11 +18,11 @@ const list = async (req: T.list.req): Promise<T.list.res> => {
     return {status: 400, json: {success: false, validation}}
   }
 
-  let subject = await Subject.FindWhere({
+  const subject = await Subject.FindWhere({
     addr: toBuffer(req.params.subject_addr),
   })
   if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
-  let attestations = await Attestation.Where({
+  const attestations = await Attestation.Where({
     subject_id: subject.id,
   })
   return {
@@ -34,7 +35,7 @@ const list = async (req: T.list.req): Promise<T.list.res> => {
 }
 
 const show = async (req: T.show.req): Promise<T.show.res> => {
-  let validation = await S.validateShowAttestation(
+  const validation = await S.validateShowAttestation(
     req.body.show_attestation.plaintext,
     req.body.show_attestation.subject_sig,
     req.params.subject_addr
@@ -48,7 +49,7 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
       json: {success: false, error: 'attestation_id_doesnt_match_sig'},
     }
   }
-  let attestation = await Attestation.FindWhere({
+  const attestation = await Attestation.FindWhere({
     id: req.params.attestation_id,
   })
   return {
@@ -61,10 +62,10 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
 }
 
 const create = async (req: T.create.req): Promise<T.create.res> => {
-  let subject = await Subject.FindWhere({
+  const subject = await Subject.FindWhere({
     addr: toBuffer(req.params.subject_addr),
   })
-  let validation = await S.validatePerformAttestation(
+  const validation = await S.validatePerformAttestation(
     req.body.perform_attestation.plaintext,
     req.body.perform_attestation.subject_sig,
     req.params.subject_addr
@@ -73,11 +74,11 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
     return {status: 400, json: {success: false, validation}}
   }
 
-  let data = await G.generateAttestationData(toBuffer(req.params.subject_addr), validation.obj!)
+  const data = await G.generateAttestationData(toBuffer(req.params.subject_addr), validation.obj!)
 
-  let e = await envPr
+  const e = await envPr
 
-  await Attestation.Create({
+  const attestation = await Attestation.Create({
     subject_id: subject.id,
     subject_addr: toBuffer(req.params.subject_addr),
     aggregator_addr: e.attestations.attester_address,
@@ -87,21 +88,49 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
   })
   return {
     status: 200,
-    json: {success: true},
+    json: {
+      success: true,
+      attestation: Attestation.serialize(attestation),
+    },
   }
 }
 
 const sign = async (req: T.sign.req): Promise<T.sign.res> => {
-  let subject = await Subject.FindWhere({
+  const e = await envPr
+
+  const subject = await Subject.FindWhere({
     addr: toBuffer(req.params.subject_addr),
   })
-  let attestation = await Attestation.FindWhere({
+  if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
+
+  const attestation = await Attestation.FindWhere({
     subject_addr: toBuffer(req.params.subject_addr),
   })
+  if (!attestation) return {status: 400, json: {success: false, error: 'no_attestation'}}
+
+  const success = HL.validateSignedAgreement(
+    req.body.sign_attestation.subject_sig,
+    e.attestations.contract_address,
+    attestation.data.layer2Hash,
+    attestation.data.requestNonce,
+    bufferToHex(attestation.subject_addr)
+  )
+
+  if (success) {
+    return {
+      status: 200,
+      json: {success: true},
+    }
+  } else {
+    return {
+      status: 400,
+      json: {success: false, error: 'invalid_sig'},
+    }
+  }
 }
 
 const del = async (req: T.del.req): Promise<T.del.res> => {
-  let validation = await S.validateRevokeAttestation(
+  const validation = await S.validateDeleteAttestation(
     req.body.revoke_attestation.plaintext,
     req.body.revoke_attestation.subject_sig,
     req.params.subject_addr

@@ -24,6 +24,7 @@ export const env = async () => {
       expiration_seconds: envVar(p, 'ATTESTATION_EXPIRATION_SECONDS', 'int', false, {default: 2678400}),
       attester_private_key: envVar(p, 'ATTESTATION_PRIVKEY', 'string'),
       attester_address: envVar(p, 'ATTESTATION_ADDR', 'string'),
+      contract_address: envVar(p, 'ATTESTATION_CONTRACT_ADDR', 'string'),
     },
   }
 }
