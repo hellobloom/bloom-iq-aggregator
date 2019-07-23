@@ -10,7 +10,7 @@
   "license": "Apache-2.0",
   "dependencies": {
     "@bloomprotocol/attestations-lib": "^5.0.1",
-    "@bloomprotocol/verify-kit": "^1.0.0",
+    "@bloomprotocol/verify-kit": "^1.0.1",
     "@types/dotenv": "^6.1.1",
     "@types/knex": "^0.16.1",
     "@types/morgan": "^1.7.35",

@@ -1,5 +1,6 @@
 import * as B from '@src/types/models/base'
 import {HashingLogic as HL} from '@bloomprotocol/attestations-lib'
+import {IBatchProof} from '@bloomprotocol/verify-kit'
 import * as S from '@src/types/sigs'
 export type TS = B.Serialize<T>
 
@@ -13,7 +14,8 @@ export type T = {
   type: string
   types: string[]
   data: HL.IBloomBatchMerkleTreeComponents | IUnsignedBloomBatchMerkleTreeComponents
-  // data: any
+  requested_batch_proof: boolean
+  batch_proof?: IBatchProof
 }
 
 type Overwrite<T1, T2> = {[P in Exclude<keyof T1, keyof T2>]: T1[P]} & T2
@@ -24,16 +26,10 @@ export type IUnsignedBloomBatchMerkleTreeComponents = Overwrite<
     subjectSig?: string
     batchAttesterSig?: string
     batchLayer2Hash?: string
-    contractAddress?: string
   }
 >
 
-export type ISignedBloomBatchMerkleTreeComponents = Overwrite<
-  HL.IBloomBatchMerkleTreeComponents,
-  {
-    contractAddress?: string
-  }
->
+export type ISignedBloomBatchMerkleTreeComponents = Overwrite<HL.IBloomBatchMerkleTreeComponents, {}>
 
 export interface TCriteriaW {
   criteria: S.IPerformAttestationStr

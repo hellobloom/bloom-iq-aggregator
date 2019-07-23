@@ -15,7 +15,11 @@ export type TSignedAttData = _TSignedAttData
 // Serializer
 
 export const serialize = (a: T): TS => {
-  return {...a, subject_addr: bufferToHex(a.subject_addr), aggregator_addr: bufferToHex(a.aggregator_addr)}
+  return {
+    ...a,
+    subject_addr: bufferToHex(a.subject_addr),
+    aggregator_addr: bufferToHex(a.aggregator_addr),
+  }
 }
 
 export type TID = Pick<T, 'id'>['id']

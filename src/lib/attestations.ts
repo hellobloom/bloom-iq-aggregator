@@ -85,10 +85,32 @@ export const generateAttestationData = async (
 
   return {
     ...components,
+    contractAddress: e.attestations.contract_address,
     requestNonce: HL.generateNonce(),
     subject: bufferToHex(subjectAddr),
     criteria: performArgs,
   }
+}
+
+export const updateAttestationToBatch = async (attestation: A.T, subjectSig: string): Promise<A.T> => {
+  let e = await envPr
+  let origData = attestation.data as A.TUnsignedAttData
+  const batchComponents = HL.getSignedBatchMerkleTreeComponents(
+    origData,
+    e.attestations.contract_address,
+    subjectSig,
+    bufferToHex(attestation.subject_addr),
+    attestation.data.requestNonce,
+    e.attestations.attester_private_key
+  )
+  let newData: A.TSignedAttData = {
+    ...origData,
+    subjectSig,
+    batchAttesterSig: batchComponents.batchAttesterSig,
+    batchLayer2Hash: batchComponents.batchLayer2Hash,
+  }
+  let updatedA = await A.UpdateOne(attestation.id, {data: newData})
+  return updatedA[0]
 }
 
 export const submit = async (batchl2hash: string) => {
@@ -109,7 +131,7 @@ export const submit = async (batchl2hash: string) => {
   return resp.data
 }
 
-export const get_proof = async (batchl2hash: string) => {
+export const getProof = async (batchl2hash: string) => {
   const e = await envPr
 
   const headers = e.attestations.service.default_headers
