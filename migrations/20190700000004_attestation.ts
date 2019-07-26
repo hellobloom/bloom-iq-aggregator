@@ -26,7 +26,7 @@ export async function up(knex: Knex): Promise<any> {
     t.jsonb('data')
       .notNullable()
       .index()
-    t.boolean('requested_batch_proof')
+    t.boolean('submitted')
       .notNullable()
       .defaultTo(false)
     t.jsonb('batch_proof')

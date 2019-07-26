@@ -14,7 +14,7 @@ export type T = {
   type: string
   types: string[]
   data: HL.IBloomBatchMerkleTreeComponents | IUnsignedBloomBatchMerkleTreeComponents
-  requested_batch_proof: boolean
+  submitted: boolean
   batch_proof?: IBatchProof
 }
 

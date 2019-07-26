@@ -53,7 +53,7 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
     id: req.params.attestation_id,
   })
 
-  if (attestation.requested_batch_proof && !attestation.batch_proof) {
+  if (attestation.submitted && !attestation.batch_proof) {
     if (!attestation.data.batchLayer2Hash) {
       return {status: 200, json: {success: false, error: 'batch_layer_2_hash_missing'}}
     }
@@ -133,6 +133,7 @@ const sign = async (req: T.sign.req): Promise<T.sign.res> => {
   if (success) {
     await G.updateAttestationToBatch(attestation, req.body.sign_attestation.subject_sig)
     await G.submit(attestation.data.batchLayer2Hash!)
+    await A.UpdateOne(attestation.id, {submitted: true})
     return {
       status: 200,
       json: {success: true},
