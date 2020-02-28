@@ -30,10 +30,14 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
   if (!validation.success) {
     return { status: 400, json: { success: false, validation } }
   }
-  await Subject.FindWhere({
+  let subject = await Subject.FindWhere({
     addr: toBuffer(req.params.subject_addr)
   })
-  return { status: 200, json: { success: true } }
+  if(subject){
+    return { status: 200, json: { success: true } }
+  } else {
+    return { status: 404, json: { success: false } }
+  }
 }
 
 const del = async (req: T.del.req): Promise<T.del.res> => {
@@ -56,17 +60,21 @@ const routes: Array<TApiRoutes<any, any>> = [
   {
     method: "post",
     paths: "/api/v1/subjects/:subject_addr",
-    fn: create
+    fn: create,
+    middleware: { subjectIsActive: false, adminRequired: false }
   },
   {
     method: "post",
     paths: "/api/v1/subjects/:subject_addr",
-    fn: show
+    fn: show,
+    middleware: { subjectIsActive: false, adminRequired: false }
+
   },
   {
     method: "delete",
     paths: "/api/v1/subjects/:subject_addr",
-    fn: del
+    fn: del,
+    middleware: { subjectIsActive: false, adminRequired: false }
   }
 ]
 
