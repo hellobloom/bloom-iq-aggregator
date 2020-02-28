@@ -1,5 +1,5 @@
 import {
-  // AttestationData as AD,
+  // VCData as AD,
   HashingLogic as HL,
 } from '@bloomprotocol/attestations-lib'
 export type TDate = string
@@ -14,6 +14,25 @@ export interface IBaseSigStr {
   type: TSigType
   timestamp: TDatetime
 }
+
+////////////////////////////
+// SUBJECTS
+////////////////////////////
+export interface ICreateSubjectStr extends IBaseSigStr {
+  type: 'bloomiq-create_subject'
+  timestamp: TDatetime
+}
+
+export interface IShowSubjectStr extends IBaseSigStr {
+  type: 'bloomiq-show_subject'
+  timestamp: TDatetime
+}
+
+export interface IDeleteSubjectStr extends IBaseSigStr {
+  type: 'bloomiq-delete_subject'
+  timestamp: TDatetime
+}
+
 
 ////////////////////////////
 // ASSOCIATIONS
@@ -123,10 +142,10 @@ export interface IShowReportAsSubjectStr extends IBaseSigStr {
 }
 
 ////////////////////////////
-// ATTESTATIONS
+// VCS 
 ////////////////////////////
-export interface IPerformAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-perform_attestation'
+export interface IIssueVCStr extends IBaseSigStr {
+  type: 'bloomiq-perform_vc'
   timestamp: TDatetime
   aggregator_addr: TAddr
   dt_start?: TDatetime
@@ -138,33 +157,33 @@ export interface IPerformAttestationStr extends IBaseSigStr {
   addr_blacklist?: Array<TAddr>
 }
 
-export interface IListAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-list_attestation'
+export interface IListVCStr extends IBaseSigStr {
+  type: 'bloomiq-list_vc'
   timestamp: TDatetime
   aggregator_addr: TAddr
 }
 
-export interface IShowAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-show_attestation'
+export interface IShowVCStr extends IBaseSigStr {
+  type: 'bloomiq-show_vc'
   timestamp: TDatetime
   aggregator_addr: TAddr
-  attestation_id: TUuid
+  vc_id: TUuid
 }
 
-export interface IDeleteAttestationStr extends IBaseSigStr {
-  type: 'bloomiq-delete_attestation'
+export interface IDeleteVCStr extends IBaseSigStr {
+  type: 'bloomiq-delete_vc'
   timestamp: TDatetime
   aggregator_addr: TAddr
-  attestation_id: TUuid
+  vc_id: TUuid
 }
 
 ////////////////////////////
 // AUXILIARY TYPES
 ////////////////////////////
-export interface IReportStr<AttestationType> extends IBaseSigStr {
+export interface IReportStr<VCType> extends IBaseSigStr {
   type: 'bloomiq-report'
   timestamp: TDatetime
   aggregator_addr: TAddr
   nonce: TNonce
-  attestation_data: HL.IClaimNode // of AttestationType
+  vc_data: HL.IClaimNode // of VCType
 }

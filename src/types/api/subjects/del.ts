@@ -1,14 +1,13 @@
-import {TRespE, TReq} from '@src/types/api/basetypes'
+import { TRespE, TReq } from "@src/types/api/basetypes"
 
 export type reqBody = {
-  sign_attestation: {
+  delete_subject: {
     subject_sig: string
     plaintext: string
   }
 }
 export type reqParams = {
   subject_addr: string
-  attestation_id: string
 }
 export type reqQuery = {}
 
@@ -16,5 +15,5 @@ export type respBody = {
   success: true
 }
 
-export type req = TReq<reqBody, reqParams>
+export type req = TReq<reqBody, reqParams, reqQuery>
 export type res = TRespE<respBody>

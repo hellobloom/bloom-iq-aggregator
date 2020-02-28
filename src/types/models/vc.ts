@@ -32,8 +32,8 @@ export type IUnsignedBloomBatchMerkleTreeComponents = Overwrite<
 export type ISignedBloomBatchMerkleTreeComponents = Overwrite<HL.IBloomBatchMerkleTreeComponents, {}>
 
 export interface TCriteriaW {
-  criteria: S.IPerformAttestationStr
+  criteria: S.IIssueVCStr
 }
 
-export type TUnsignedAttData = IUnsignedBloomBatchMerkleTreeComponents & TCriteriaW
-export type TSignedAttData = ISignedBloomBatchMerkleTreeComponents & TCriteriaW
+export type TUnsignedVCData = IUnsignedBloomBatchMerkleTreeComponents & TCriteriaW
+export type TSignedVCData = ISignedBloomBatchMerkleTreeComponents & TCriteriaW

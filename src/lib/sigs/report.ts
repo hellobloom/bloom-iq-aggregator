@@ -134,7 +134,7 @@ let submitReportFields: Array<keyof S.ISubmitReportStr> = [
   'timestamp',
   'aggregator_addr',
   'subject_addr',
-  'report_sha',
+  'report_hash',
 ]
 let submitReportType: S.ISubmitReportStr['type'] = 'bloomiq-submit_report'
 

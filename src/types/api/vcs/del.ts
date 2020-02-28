@@ -1,22 +1,20 @@
 import { TRespE, TReq } from "@src/types/api/basetypes"
-import * as Attestation from "@src/types/models/attestation"
-import * as Attestation from "@src/types/models/attestation"
 
 export type reqBody = {
-  list_attestation: {
+  revoke_vc: {
     plaintext: string
     subject_sig: string
   }
 }
 export type reqParams = {
   subject_addr: string
+  vc_id: string
 }
+
 export type reqQuery = {}
 
 export type respBody = {
   success: true
-  attestations: Array<Attestation.TS>
-  attestations: Array<Attestation.TS>
 }
 
 export type req = TReq<reqBody, reqParams>
