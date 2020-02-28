@@ -5,33 +5,35 @@ import * as http from "http"
 import { TApiRoutes } from "@src/types/api/basetypes"
 
 import AssociationsRouter from "@src/api/ctrl/associations"
-import AttestationsRouter from "@src/api/ctrl/attestations"
+import VCsRouter from "@src/api/ctrl/vcs"
 import ReportersRouter from "@src/api/ctrl/reporters"
 import ReportsRouter from "@src/api/ctrl/reports"
-import SubjectsRouter from "@src/api/ctrl/subjects"
 
-export const routes: TApiRoutes<any, any>[] = [
-  ...AssociationsRouter,
-  ...AttestationsRouter,
-  ...ReportersRouter,
-  ...ReportsRouter,
-  ...SubjectsRouter
-]
+export const getRoutes = async (): Promise<TApiRoutes<any, any>[]> => {
+  return [
+    ...AssociationsRouter,
+    ...VCsRouter,
+    ...ReportersRouter,
+    ...ReportsRouter,
+  ]
+}
 
 export const BloomIQ = async () => {
   let e = await env()
 
   const app = await appFn()
 
+  const routes = await getRoutes()
+
   applyApiRouters(app, routes)
 
   const appAsAny = app as any
 
   appAsAny.server = http.createServer(app)
-  const listenPort = process.env.PORT || e.appPort
-  console.log("Attempting to listen on", listenPort, e.expressBind)
-  if (e.expressBind) {
-    appAsAny.server.listen(listenPort, e.expressBind)
+  const listenPort = process.env.PORT || e.app_port
+  console.log("Attempting to listen on", listenPort, e.express_bind)
+  if (e.express_bind) {
+    appAsAny.server.listen(listenPort, e.express_bind)
   } else {
     appAsAny.server.listen(listenPort)
   }

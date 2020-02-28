@@ -1,7 +1,7 @@
 import * as Knex from 'knex'
 
 export async function up(knex: Knex): Promise<any> {
-  knex.schema.createTable('attestations', t => {
+  knex.schema.createTable('vcs', t => {
     t.uuid('id').primary()
     t.timestamps()
 
@@ -36,5 +36,5 @@ export async function up(knex: Knex): Promise<any> {
 }
 
 export async function down(knex: Knex): Promise<any> {
-  knex.schema.dropTable('attestations')
+  knex.schema.dropTable('vcs')
 }

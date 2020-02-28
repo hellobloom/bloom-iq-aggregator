@@ -1,6 +1,6 @@
 import * as Admin from "@src/models/admin"
 import * as Association from "@src/models/association"
-import * as Attestation from "@src/models/attestation"
+import * as VC from "@src/models/vc"
 import * as Report from "@src/models/report"
 import * as Reporter from "@src/models/reporter"
 import * as ReportPermission from "@src/models/report_permission"
@@ -11,7 +11,7 @@ import * as base from "@src/models/base"
 export {
   Admin,
   Association,
-  Attestation,
+  VC,
   Report,
   Reporter,
   ReportPermission,

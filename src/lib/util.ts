@@ -1,10 +1,12 @@
 import {
-  Association,
-  /* Subject, Reporter, */ ReportPermission
+  Association, Subject,
+  /* Reporter, */ ReportPermission
 } from "@src/models"
 
 export const subjectIsActive = async (subject_addr: Buffer) => {
   return (
+    !!(await Subject.FindWhere({ addr: subject_addr }))
+    && 
     (await Association.Q().where({
       subject_addr
     })

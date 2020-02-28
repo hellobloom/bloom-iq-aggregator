@@ -22,24 +22,46 @@ export type TFlexEndpoint = {
   }
 }
 
+export interface ILogstash {
+  host: string
+  username: string
+  password: string
+}
+
+export interface Features {
+  open_subject_registration: boolean
+}
+
+export const getFeature = async (featureName: keyof Features, opts?: {}) => {
+  let e = await env()
+  return !!e.features[featureName]
+}
+
 export const env = async () => {
   let p = process.env
   return {
-    appPort: envVar(p, 'APP_PORT', 'int'),
-    expressBind: envVar(p, 'EXPRESS_BIND', 'string'),
+    app_port: envVar(p, 'APP_PORT', 'int'),
+    app_id: envVar(p, 'APP_ID', 'int'),
+    express_bind: envVar(p, 'EXPRESS_BIND', 'string'),
+    sentry_dsn: envVar(p, 'SENTRY_DSN', 'string', false),
+    logstash: envVar(p, 'LOGSTASH', 'json', false) as ILogstash,
+    source_version: envVar(p, 'SOURCE_VERSION', 'string'),
     sig_max_seconds_ago: envVar(p, 'SIG_MAX_SECONDS_AGO', 'int'),
     prometheus: envVar(p, 'PROMETHEUS', 'json') as TWebhookIn,
-    attestations: {
-      type: envVar(p, 'ATTESTATION_TYPE', 'string') as keyof typeof AttestationTypeID,
-      provider: envVar(p, 'ATTESTATION_PROVIDER', 'string'),
-      expiration_seconds: envVar(p, 'ATTESTATION_EXPIRATION_SECONDS', 'int', false, {default: 2678400}),
-      attester_private_key: envVar(p, 'ATTESTATION_PRIVKEY', 'string'),
-      attester_address: envVar(p, 'ATTESTATION_ADDR', 'string'),
-      contract_address: envVar(p, 'ATTESTATION_CONTRACT_ADDR', 'string'),
+    pipeline_stage: envVar(p, 'PIPELINE_STAGE', 'string') as PipelineStages,
+    features: envVar(p, 'FEATURES', 'json', false, { default: {}}) as Features,
+    vcs: {
+      type: envVar(p, 'VC_TYPE', 'string') as keyof typeof AttestationTypeID,
+      provider: envVar(p, 'VC_PROVIDER', 'string'),
+      expiration_seconds: envVar(p, 'VC_EXPIRATION_SECONDS', 'int', false, {default: 2678400}),
+      aggregator_private_key: envVar(p, 'ISSUER_PRIVKEY', 'string'),
+      aggregator_address: envVar(p, 'ISSUER_ADDR', 'string'),
+      contract_address: envVar(p, 'ANCHORING_CONTRACT_ADDR', 'string'),
+      anchor_vcs: envVar(p, 'ANCHOR_VCS', 'bool'),
       service: {
-        default_headers: envVar(p, 'ATTESTATION_SUBMISSION_HEADERS', 'json'),
-        submit: envVar(p, 'ATTESTATION_SUBMISSION_SUBMIT', 'json') as TFlexEndpoint,
-        get_proof: envVar(p, 'ATTESTATION_SUBMISSION_GET_PROOF', 'json') as TFlexEndpoint,
+        default_headers: envVar(p, 'VC_SUBMISSION_HEADERS', 'json'),
+        submit: envVar(p, 'VC_SUBMISSION_SUBMIT', 'json') as TFlexEndpoint,
+        get_proof: envVar(p, 'VC_SUBMISSION_GET_PROOF', 'json') as TFlexEndpoint,
       },
     },
   }
@@ -107,3 +129,12 @@ export const envVar = (
 }
 
 export const testBool = (value: string) => (['true', 't', 'yes', 'y'] as any).includes(value.toLowerCase())
+
+export enum PipelineStages {
+  development = 'development',
+  ci = 'ci',
+  staging = 'staging',
+  production = 'production',
+  review = 'review',
+}
+

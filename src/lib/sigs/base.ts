@@ -127,10 +127,10 @@ export const checkTimestamp = async (obj: any): Promise<TFieldResult> => {
 
 export const checkAggregatorAddr = async (obj: any): Promise<TFieldResult> => {
   let e = await envPr
-  if (e.attestations.attester_address !== obj.aggregator_addr) {
+  if (e.vcs.aggregator_address !== obj.aggregator_addr) {
     return fieldErr('aggregator_addr', 'unlisted', {
       specified: obj.aggregator_addr,
-      listed: e.attestations.attester_address,
+      listed: e.vcs.aggregator_address,
     })
   }
   return success

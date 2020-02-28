@@ -2,15 +2,15 @@ import * as B from '@src/models/base'
 import {
   T as _T,
   TS as _TS,
-  TUnsignedAttData as _TUnsignedAttData,
-  TSignedAttData as _TSignedAttData,
-} from '@src/types/models/attestation'
+  TUnsignedVCData as _TUnsignedVCData,
+  TSignedVCData as _TSignedVCData,
+} from '@src/types/models/vc'
 import {bufferToHex} from 'ethereumjs-util'
 
 export type T = _T
 export type TS = _TS
-export type TUnsignedAttData = _TUnsignedAttData
-export type TSignedAttData = _TSignedAttData
+export type TUnsignedVCData = _TUnsignedVCData
+export type TSignedVCData = _TSignedVCData
 
 // Serializer
 
@@ -25,7 +25,7 @@ export const serialize = (a: T): TS => {
 export type TID = Pick<T, 'id'>['id']
 export type TAttr = keyof T
 
-export const Q = () => B.db('attestations')
+export const Q = () => B.db('vcs')
 
 export const Create = B.mkCreate<T>(Q)
 export const FindById = B.mkFindById<T, 'id'>(Q, 'id')

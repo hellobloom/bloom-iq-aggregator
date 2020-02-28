@@ -1,14 +1,13 @@
-import * as express from 'express'
+import express from 'express'
 import {PathParams} from 'express-serve-static-core'
 import {fnToExpressHandler, getHandlers} from '@src/api/utils'
 import {TApiRoutes} from '@src/types/api/basetypes'
-import {env, EPipelineStages} from '@src/environment'
-import {sentry} from '@src/logger'
-import * as helmet from 'helmet'
-import * as morgan from 'morgan'
+import {env, PipelineStages} from '@src/environment'
+import helmet from 'helmet'
+import morgan from 'morgan'
 import * as bodyParser from 'body-parser'
-import * as compress from 'compression'
-import * as Prometheus from '@src/services/prometheus'
+import compress from 'compression'
+import * as Prometheus from '@src/lib/prometheus'
 import * as middleware from '@src/api/middleware'
 
 /**
@@ -38,8 +37,6 @@ export const appFn = async () => {
   const app = express()
 
   Prometheus.injectMetricsRoute(app)
-  app.use((await sentry).Handlers.requestHandler() as any)
-  app.use((await sentry).Handlers.errorHandler() as any)
 
   app.use(helmet())
   app.use(morgan('tiny'))
@@ -51,7 +48,7 @@ export const appFn = async () => {
 
   app.use(compress())
 
-  if (e.pipelineStage === EPipelineStages.development) {
+  if (e.pipeline_stage === PipelineStages.development) {
     app.use((req, res, next) => {
       req.headers['x-forwarded-for'] =
         req.headers['x-forwarded-for'] ||
@@ -63,7 +60,7 @@ export const appFn = async () => {
   // based on the rewritten value for unversioned requests.
   app.use(middleware.rewriteUnversionedApiUrls)
 
-  if (e.pipelineStage !== EPipelineStages.development) {
+  if (e.pipeline_stage !== PipelineStages.development) {
     app.set('trust proxy', 1) // Trust first proxy
     app.use(middleware.enforceHTTPS)
   }
