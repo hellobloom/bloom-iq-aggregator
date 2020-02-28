@@ -1,5 +1,5 @@
 import * as express from "express"
-import { env, getFeature } from "@src/environment"
+import { env } from "@src/environment"
 import { appFn, applyApiRouters } from "@src/api/base"
 import * as http from "http"
 import { TApiRoutes } from "@src/types/api/basetypes"
@@ -8,7 +8,6 @@ import AssociationsRouter from "@src/api/ctrl/associations"
 import VCsRouter from "@src/api/ctrl/vcs"
 import ReportersRouter from "@src/api/ctrl/reporters"
 import ReportsRouter from "@src/api/ctrl/reports"
-import SubjectsRouter from "@src/api/ctrl/subjects"
 
 export const getRoutes = async (): Promise<TApiRoutes<any, any>[]> => {
   return [
@@ -16,7 +15,6 @@ export const getRoutes = async (): Promise<TApiRoutes<any, any>[]> => {
     ...VCsRouter,
     ...ReportersRouter,
     ...ReportsRouter,
-    ...((await getFeature('open_subject_registration')) ? SubjectsRouter : [])
   ]
 }
 

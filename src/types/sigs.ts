@@ -16,25 +16,6 @@ export interface IBaseSigStr {
 }
 
 ////////////////////////////
-// SUBJECTS
-////////////////////////////
-export interface ICreateSubjectStr extends IBaseSigStr {
-  type: 'bloomiq-create_subject'
-  timestamp: TDatetime
-}
-
-export interface IShowSubjectStr extends IBaseSigStr {
-  type: 'bloomiq-show_subject'
-  timestamp: TDatetime
-}
-
-export interface IDeleteSubjectStr extends IBaseSigStr {
-  type: 'bloomiq-delete_subject'
-  timestamp: TDatetime
-}
-
-
-////////////////////////////
 // ASSOCIATIONS
 ////////////////////////////
 export interface IAllowAssociationStr extends IBaseSigStr {

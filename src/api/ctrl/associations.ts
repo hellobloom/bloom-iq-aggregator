@@ -1,4 +1,5 @@
 // import { renderError } from "@src/api/renderError"
+import { getFeature} from '@src/environment'
 import { TApiRoutes } from "@src/types/api/basetypes"
 import * as T from "@src/types/api/associations"
 import { Association, Subject } from "@src/models"
@@ -55,6 +56,10 @@ const show = async (req: T.show.req): Promise<T.show.res> => {
 }
 
 const create = async (req: T.create.req): Promise<T.create.res> => {
+  if(!(await getFeature('open_subject_registration'))){
+    return {status: 400, json: {success: false, error: 'registration_disabled'}}
+  }
+
   let validation = await S.validateAllowAssociation(
     req.body.allow_association.plaintext,
     req.body.allow_association.subject_sig,
@@ -63,11 +68,9 @@ const create = async (req: T.create.req): Promise<T.create.res> => {
   if (!validation.success) {
     return { status: 400, json: { success: false, validation } }
   }
-  const subject = await Subject.FindWhere({
-    addr: toBuffer(req.params.subject_addr),
+  await Subject.Create({
+    addr: toBuffer(req.params.subject_addr)
   })
-  if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
-
   let association = await Association.Create({
     subject_addr: toBuffer(req.params.subject_addr),
     allow_association_sig: toBuffer(req.body.allow_association.subject_sig),
@@ -88,11 +91,6 @@ const del = async (req: T.del.req): Promise<T.del.res> => {
   if (!validation.success) {
     return { status: 400, json: { success: false, validation } }
   }
-  const subject = await Subject.FindWhere({
-    addr: toBuffer(req.params.subject_addr),
-  })
-  if (!subject) return {status: 400, json: {success: false, error: 'no_subject'}}
-
   await Association.UpdateAll(
     {
       subject_addr: toBuffer(req.params.subject_addr)
